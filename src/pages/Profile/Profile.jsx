@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import style from './Home.module.css';
+import style from './Profile.module.css';
 
 const Profile = () => {
     

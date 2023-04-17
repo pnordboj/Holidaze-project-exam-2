@@ -1,21 +1,111 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
 import { Route, Link, Routes, Outlet } from 'react-router-dom';
+import { FaUserCircle } from 'react-icons/fa';
 
 // Pages
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Manage from './pages/Manage';
-import Profile from './pages/Profile';
-import Venue from './pages/Venue';
-import NotFound from './pages/NotFound';
+import Home from './pages/Home/Home';
+import Login from './pages/Login/Login';
+import Manage from './pages/Manage/Manage';
+import Profile from './pages/Profile/Profile';
+import Venue from './pages/Venue/Venue';
+import NotFound from './pages/NotFound/NotFound';
+
+function Nav() {
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+
+  const checkLogin = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+      setUsername(localStorage.getItem('username'));
+    } else {
+      setIsLoggedIn(false);
+    }
+  }
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
+
+  return (
+    <nav className="bg-blue-500 p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        {isLoggedIn ? (
+          <div className="flex space-x-6">
+            <Link
+              exact
+              to="/"
+              className="text-white font-semibold hover:text-blue-300"
+              activeClassName="text-blue-300"
+            >
+              Home
+            </Link>
+            <Link
+              to="/manage"
+              className="text-white font-semibold hover:text-blue-300"
+              activeClassName="text-blue-300"
+            >
+              Manage your venue(s)
+            </Link>
+          </div>
+        ) : (
+          <div className="flex space-x-6">
+            <Link
+              exact
+              to="/"
+              className="text-white font-semibold hover:text-blue-300"
+              activeClassName="text-blue-300"
+            >
+              Home
+            </Link>
+          </div>
+        )}
+        {isLoggedIn ? (
+          <div className="flex items-center space-x-2">
+            <Link to="/profile/:id" className="text-white hover:text-blue-300">
+              <span className="text-white font-semibold">{username}</span>
+            </Link>
+            <Link to="/profile/:id" className="text-white hover:text-blue-300">
+              <FaUserCircle size={24} />
+            </Link>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-2">
+            <Link to="/login" className="text-white font-semibold hover:text-blue-300">
+              <span className="text-white font-semibold">Login/Register</span>
+            </Link>
+            <Link
+              to="/login"
+              className="text-white font-semibold hover:text-blue-300"
+            >
+              <FaUserCircle size={24} />
+            </Link>
+          </div>
+        )}
+      </div>
+    </nav>
+  )
+}
 
 function Header() {
-
+  return (
+    <header className="bg-blue-500 p-4">
+      <Nav />
+    </header>
+  )
 }
 
 function Footer() {
-
+  return (
+    <footer className="bg-blue-500 p-4 fixed bottom-0 w-full">
+      <div className="container mx-auto text-center text-white">
+        <p>© 2023 - All Rights Reserved</p>
+      </div>
+    </footer>
+  )
 }
 
 function Layout() {

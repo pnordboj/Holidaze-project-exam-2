@@ -4,12 +4,12 @@ import { Route, Link, Routes, Outlet } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 
 // Pages
-import Home from './pages/Home/Home';
-import Login from './pages/Login/Login';
-import Manage from './pages/Manage/Manage';
-import Profile from './pages/Profile/Profile';
-import Venue from './pages/Venue/Venue';
-import NotFound from './pages/NotFound/NotFound';
+import Home from './pages/home/Home';
+import Login from './pages/login/Login';
+import Manage from './pages/manage/Manage';
+import Profile from './pages/profile/Profile';
+import Venue from './pages/venue/Venue';
+import NotFound from './pages/notfound/NotFound';
 
 function Nav() {
 

@@ -5,7 +5,7 @@ import { FaUserCircle } from 'react-icons/fa';
 
 // Pages
 import Home from './pages/home/Home';
-import Login from './pages/login/Login';
+import Authenticate from './pages/authenticate/Authenticate';
 import Manage from './pages/manage/Manage';
 import Profile from './pages/profile/Profile';
 import Venue from './pages/venue/Venue';
@@ -124,7 +124,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="login" element={<Login />} />
+          <Route path="login" element={<Authenticate />} />
           <Route path="manage/:id" element={<Manage />} />
           <Route path="profile/:id" element={<Profile />} />
           <Route path="venue/:id" element={<Venue />} />

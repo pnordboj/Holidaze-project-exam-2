@@ -13,14 +13,20 @@ import NotFound from './pages/notfound/NotFound';
 
 function Nav() {
 
+  const accessToken = localStorage.getItem('accessToken');
+  // If the local storage changes, update the state
+  useEffect(() => {
+    checkLogin();
+  }, [accessToken]);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
 
   const checkLogin = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     if (token) {
       setIsLoggedIn(true);
-      setUsername(localStorage.getItem('username'));
+      setUsername(localStorage.getItem('name'));
     } else {
       setIsLoggedIn(false);
     }

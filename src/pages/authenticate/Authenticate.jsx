@@ -1,231 +1,410 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { redirect } from "react-router-dom";
+import Countdown from "react-countdown";
 
 function Authenticate() {
+  let url = "https://api.noroff.dev/api/v1/holidaze/auth";
 
-    /* Handles */
+  const [registerActive, setRegisterActive] = useState(false);
+  const [registerd, setRegisterd] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [loginActive, setLoginActive] = useState(true);
 
-    const [registerActive, setRegisterActive] = useState(false);
-    const registerd = false;
-    const [loginActive, setLoginActive] = useState(true);
-    const [avatarActiver, setAvatarActiver] = useState(false);
+  const [avatar, setAvatar] = useState(
+    "https://placehold.co/100x100?text=Avatar"
+  );
+  const [venueManager, setVenueManager] = useState(false);
 
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [avatar, setAvatar] = useState('https://placehold.co/100x100?text=Avatar');
-
-    const usernameError = false;
-    const emailError = false;
-    const passwordError = false;
-
-    function handleUsername(e) {
-        if (username.length > 3) {
-            setUsername(e.target.value);
-        } else {
-            usernameError = true;
-        }
-    }
-
-    function handleEmail(e) {
-        if (email.endsWith('@stud.noroff.no')) {
-            setEmail(e.target.value);
-        } else {
-            emailError = true;        
-        }
-    }
-
-    function handlePassword(e) {
-        if (password.length > 8) {
-            setPassword(e.target.value);
-        } else {
-            passwordError = true;
-        }
-    }
-
-    function handleSubmit(e) {
-        e.preventDefault();
-        console.log('Submitted');
-
-    }
-
-    function handleAvatar(e) {
-        setAvatar(e.target.value);
-    }
-
-    /* Render */
-
-    const AvatarPage = () => {
-        const [imageURL, setImageURL] = useState('');
-
-        const handleChange = (event) => {
-            setImageURL(event.target.value);
-        };
+  const renderer = ({ seconds, completed }) => {
+    if (loggedIn) {
+      if (completed) {
+        return <p>Redirecting...</p> && redirect("/");
+      } else {
         return (
-            <div>
-                <h1 className="text-3xl font-bold my-4">Avatar Upload</h1>
-                <div className="w-1/2 mx-auto">
-                <label htmlFor="imageURL">Image URL:</label>
-                <input
-                    type="text"
-                    id="imageURL"
-                    name="imageURL"
-                    value={imageURL}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-gray-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-                {imageURL && (
-                    <img
-                    src={imageURL}
-                    alt="Preview"
-                    className="block w-full rounded-md my-4"
-                    />
-                )}
-                <button
-                    className="bg-blue-500 text-white py-2 px-4 rounded-md"
-                    disabled={!imageURL}
-                >
-                    Save
-                </button>
-                </div>
+          <div className="flex-1 flex-col justify-center text-center justify-items-center">
+            <div className="py-2 rounded-tl-md rounded-bl-md">
+              <p className="text-green-500 text-lg block italic">
+                Logged in successfully!
+              </p>
+              <p className="block text-gray-700 text-sm font-bold mb-2">
+                Redirecting you to home page in:
+              </p>
             </div>
-            );
+            <div className="bg-blue-500 p-2 border shadow font-bold text-white rounded-md w-16 m-auto mb-4">
+              <p className="text-xl">{seconds}</p>
+              <p>sec</p>
+            </div>
+          </div>
+        );
+      }
     }
+  };
 
-    return (
-        <div className="container mx-auto">
-            <h1 className="text-3xl font-bold my-4">Authenticate</h1>
-            <div className="flex justify-center items-center">
-                <div className="w-1/2">
-                    <div className="flex justify-center items-center">
-                        <button
-                            className={`w-1/2 py-2 rounded-tl-md rounded-bl-md ${loginActive ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-500'}`}
-                            onClick={() => {
-                                setLoginActive(true);
-                                setRegisterActive(false);
-                            }}
-                        >
-                            Login
-                        </button>
-                        <button
-                            className={`w-1/2 py-2 rounded-tr-md rounded-br-md ${registerActive ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-500'}`}
-                            onClick={() => {
-                                setLoginActive(false);
-                                setRegisterActive(true);
-                            }}
-                        >
-                            Register
-                        </button>
-                    </div>
-                    <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                        {loginActive && (
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                                        Username
-                                    </label>
-                                    <input
-                                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${usernameError ? 'border-red-500' : ''}`}
-                                        id="username"
-                                        type="text"
-                                        placeholder="Username"
-                                        value={username}
-                                        onChange={handleUsername}
-                                    />
-                                    {usernameError && (
-                                        <p className="text-red-500 text-xs italic">Please choose a username with at least 4 characters.</p>
-                                    )}
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                                        Password
-                                    </label>
-                                    <input
-                                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${passwordError ? 'border-red-500' : ''}`}
-                                        id="password"
-                                        type="password"
-                                        placeholder="******************"
-                                        value={password}
-                                        onChange={handlePassword}
-                                    />
-                                    {passwordError && (
-                                        <p className="text-red-500 text-xs italic">Please choose a password with at least 8 characters.</p>
-                                    )}
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <button
-                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                        type="submit"
-                                    >
-                                        Login
-                                    </button>
-                                </div>
-                            </form>
-                        )}
-                        {registerActive && (
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                                        Username
-                                    </label>
-                                    <input
-                                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${usernameError ? 'border-red-500' : ''}`}
-                                        id="username"
-                                        type="text"
-                                        placeholder="Username"
-                                        value={username}
-                                        onChange={handleUsername}
-                                    />
-                                    {usernameError && (
-                                        <p className="text-red-500 text-xs italic">Please choose a username with at least 4 characters.</p>
-                                    )}
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                                        Email
-                                    </label>
-                                    <input
-                                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${emailError ? 'border-red-500' : ''}`}
-                                        id="email"
-                                        type="email"
-                                        placeholder="Email"
-                                        value={email}
-                                        onChange={handleEmail}
-                                    />
-                                    {emailError && (
-                                        <p className="text-red-500 text-xs italic">Please choose a valid email.</p>
-                                    )}
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                                        Password
-                                    </label>
-                                    <input
-                                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${passwordError ? 'border-red-500' : ''}`}
-                                        id="password"
-                                        type="password"
-                                        placeholder="******************"
-                                        value={password}
-                                        onChange={handlePassword}
-                                    />
-                                    {passwordError && (
-                                        <p className="text-red-500 text-xs italic">Please choose a password with at least 8 characters.</p>
-                                    )}
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <button
-                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                        type="submit"
-                                    >
-                                        Register
-                                    </button>
-                                </div>
-                            </form>
-                        )}
-                    </div>
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  function onSubmit(data) {
+    console.log(data);
+    if (registerActive) {
+      fetch(`${url}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "name": data.name,
+          "email": data.email,
+          "avatar": avatar,
+          "venueManager": venueManager,
+          "password": data.password,
+        }),
+      })
+        .then((response) => {
+            console.log(response);
+            return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          if (data.id) {
+            setRegisterd(true);
+          }
+        })
+        .catch((error) => {
+            setRegisterd(false);
+          console.log("Error:", error);
+        });
+    } else {
+      fetch(`${url}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "email": data.email,
+          "password": data.password,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.accessToken) {
+            setLoggedIn(true)
+            localStorage.setItem("accessToken", data.accessToken);
+            localStorage.setItem("name", JSON.stringify(data.name));
+            localStorage.setItem("email", JSON.stringify(data.email));
+            localStorage.setItem("avatar", JSON.stringify(data.avatar));
+            localStorage.setItem("venueManager", data.venueManager);
+
+            alert("You are now logged in!");
+            redirect("/");
+          }
+        })
+        .catch((error) => {
+            console.log("Error:", error);
+            setLoggedIn(false)
+        });
+    }
+  }
+
+  function handleAvatar(e) {
+    setAvatar(e.target.value);
+    if (e.target.value === "") {
+      setAvatar("https://placehold.co/100x100?text=Avatar");
+    }
+  }
+
+  function handleVenueManager(e) {
+    setVenueManager(e.target.value);
+  }
+
+  const emailValidation = {
+    required: true,
+    pattern: /^[A-Z0-9._%+-]+@stud\.noroff\.no$/i,
+  };
+
+  return (
+    <div className="container mx-auto">
+      <h1 className="text-3xl font-bold my-4">Authenticate</h1>
+      <div className="flex justify-center items-center">
+        <div className="w-1/2">
+          <div className="flex justify-center items-center">
+            <button
+              className={`w-1/2 py-2 rounded-tl-md rounded-bl-md ${
+                loginActive
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-500"
+              }`}
+              onClick={() => {
+                setLoginActive(true);
+                setRegisterActive(false);
+              }}
+            >
+              Login
+            </button>
+            <button
+              className={`w-1/2 py-2 rounded-tr-md rounded-br-md ${
+                registerActive
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-500"
+              }`}
+              onClick={() => {
+                setLoginActive(false);
+                setRegisterActive(true);
+              }}
+            >
+              Register
+            </button>
+          </div>
+          <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            {loginActive && (
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="email"
+                  >
+                    Email
+                  </label>
+                  <input
+                    {...register("email", emailValidation)}
+                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                      errors.email ? "border-red-500" : ""
+                    }`}
+                    id="email"
+                    placeholder="Email"
+                    type="email"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs italic">
+                      Please enter a valid @stud.noroff.no email address.
+                    </p>
+                  )}
                 </div>
-            </div>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="password"
+                  >
+                    Password
+                  </label>
+                  <input
+                    {...register("password", { required: true, minLength: 4 })}
+                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                      errors.password ? "border-red-500" : ""
+                    }`}
+                    id="password"
+                    type="password"
+                    placeholder="******************"
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-xs italic">
+                      Password must be at least 4 characters.
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="submit"
+                    id="login"
+                  >
+                    Login
+                  </button>
+                </div>
+              </form>
+            )}
+            {loggedIn && (
+              <Countdown date={Date.now() + 5000} renderer={renderer} />
+            )}
+            {registerActive && (
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="name"
+                  >
+                    Name
+                  </label>
+                  <input
+                    {...register("name", { required: true, minLength: 4 })}
+                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                      errors.name ? "border-red-500" : ""
+                    }`}
+                    id="name"
+                    placeholder="Name"
+                    type="text"
+                  />
+                  {errors.username && (
+                    <p className="text-red-500 text-xs italic">
+                      Username must be at least 4 characters.
+                    </p>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="email"
+                  >
+                    Email
+                  </label>
+                  <input
+                    {...register("email", emailValidation)}
+                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                      errors.email ? "border-red-500" : ""
+                    }`}
+                    id="email"
+                    placeholder="Email"
+                    type="email"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs italic">
+                      Please enter a valid @stud.noroff.no email address.
+                    </p>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="password"
+                  >
+                    Password
+                  </label>
+                  <input
+                    {...register("password", { required: true, minLength: 4 })}
+                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                      errors.password ? "border-red-500" : ""
+                    }`}
+                    id="password"
+                    type="password"
+                    placeholder="******************"
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-xs italic">
+                      Password must be at least 4 characters.
+                    </p>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="avatar"
+                  >
+                    Image URL:
+                  </label>
+                  <input
+                    type="text"
+                    id="avatar"
+                    placeholder="Image URL"
+                    name="Image URL"
+                    onChange={handleAvatar}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                  <div className="w-1/2">
+                    {avatar && (
+                      <img
+                        src={avatar}
+                        alt="Preview"
+                        className="block w-full rounded-md my-4"
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="mb-4 mt-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Are you a venue manager?
+                  </label>
+                  <select
+                    className="bg-blue-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 focus:border-gray-500 block p-2.5"
+                    onChange={handleVenueManager}
+                  >
+                    <option value={true}>Yes</option>
+                    <option value={false}>No</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="submit"
+                    id="register"
+                  >
+                    Register
+                  </button>
+                </div>
+              </form>
+            )}
+            {registerd && (
+              <div>
+                <p className="text-green-500 text-l block italic">
+                  You have been registered successfully. Please login.
+                </p>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="email"
+                    >
+                      Email
+                    </label>
+                    <input
+                      {...register("email", emailValidation)}
+                      className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                        errors.email ? "border-red-500" : ""
+                      }`}
+                      id="email"
+                      placeholder="Email"
+                      type="email"
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-xs italic">
+                        Please enter a valid @stud.noroff.no email address.
+                      </p>
+                    )}
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="password"
+                    >
+                      Password
+                    </label>
+                    <input
+                      {...register("password", {
+                        required: true,
+                        minLength: 4,
+                      })}
+                      className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                        errors.password ? "border-red-500" : ""
+                      }`}
+                      id="password"
+                      type="password"
+                      placeholder="******************"
+                    />
+                    {errors.password && (
+                      <p className="text-red-500 text-xs italic">
+                        Password must be at least 4 characters.
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <button
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      type="submit"
+                      id="login"
+                    >
+                      Login
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+          </div>
         </div>
-        
-    )
-
+      </div>
+    </div>
+  );
 }
+
+export default Authenticate;

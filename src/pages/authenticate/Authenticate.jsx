@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { redirect } from "react-router-dom";
 import Countdown from "react-countdown";
+import { API_URL_AUTH } from "../../common/common";
 
 function Authenticate() {
-  let url = "https://api.noroff.dev/api/v1/holidaze/auth";
 
   const [registerActive, setRegisterActive] = useState(false);
   const [registerd, setRegisterd] = useState(false);
@@ -50,7 +50,7 @@ function Authenticate() {
   function onSubmit(data) {
     console.log(data);
     if (registerActive) {
-      fetch(`${url}/register`, {
+      fetch(`${API_URL_AUTH}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +78,7 @@ function Authenticate() {
           console.log("Error:", error);
         });
     } else {
-      fetch(`${url}/login`, {
+      fetch(`${API_URL_AUTH}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -91,11 +91,11 @@ function Authenticate() {
         .then((response) => response.json())
         .then((data) => {
           if (data.accessToken) {
-            setLoggedIn(true)
+            setLoggedIn(true);
             localStorage.setItem("accessToken", data.accessToken);
-            localStorage.setItem("name", JSON.stringify(data.name));
-            localStorage.setItem("email", JSON.stringify(data.email));
-            localStorage.setItem("avatar", JSON.stringify(data.avatar));
+            localStorage.setItem("name", JSON.stringify(data.name).replace(/['"]+/g, ""));
+            localStorage.setItem("email", JSON.stringify(data.email).replace(/['"]+/g, ""));
+            localStorage.setItem("avatar", JSON.stringify(data.avatar).replace(/['"]+/g, ""));
             localStorage.setItem("venueManager", data.venueManager);
 
             alert("You are now logged in!");

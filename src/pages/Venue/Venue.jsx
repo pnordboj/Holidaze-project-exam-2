@@ -5,14 +5,11 @@ import { MdFoodBank, MdFullscreenExit } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import Modal from 'react-modal';
+import { API_URL_VENUES } from '../../common/common';
 
 function Venue() {
 
     const [isOpen, setIsOpen] = useState(false);
-
-    let params = useParams();
-    let url = `https://api.noroff.dev/api/v1/holidaze/venues/${params.id}?_owner=true`;
-
     const [venue, setVenue] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -20,14 +17,15 @@ function Venue() {
         e.target.src = 'https://placehold.co/600x400?text=Image+Not+Found'
     }
 
+    let params = useParams().id;
     useEffect(() => {
-        fetch(url)
+        fetch(`${API_URL_VENUES}/${params}?_owner=true`)
             .then((res) => res.json())
             .then((json) => {
                 setVenue(json);
                 setIsLoading(false);
             });
-    }, []);
+    }, [params]);
 
     const sliderSettings = {
         dots: true,

@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Route, Routes, Outlet } from 'react-router-dom';
 
 // Pages
@@ -22,21 +22,21 @@ function Layout() {
       <Outlet />
       <Footer />
     </div>
-  )
+  );
 }
 
 function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path='/' element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="login" element={<Authenticate />} />
-          <Route path="manage/:id" element={<Manage />} />
-          <Route path="profile/:id" element={<Profile />} />
-          <Route path="venue/:id" element={<Venue />} />
-          <Route path="create-venue" element={<CreateVenue />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path='login' element={<Authenticate />} />
+          <Route path='manage/:id' element={<Manage />} />
+          <Route path='profile/:id' element={<Profile />} />
+          <Route path='venue/:id' element={<Venue />} />
+          <Route path='create-venue' element={<CreateVenue />} />
+          <Route path='*' element={<NotFound />} />
         </Route>
       </Routes>
     </div>

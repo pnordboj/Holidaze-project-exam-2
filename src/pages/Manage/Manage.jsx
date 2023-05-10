@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import style from './Manage.module.css';
+import React from 'react';
 
 const Manage = () => {
-    return (
-        <div>
-            <h1>Manage</h1>
-        </div>
-    )
-}
+  return (
+    <div>
+      <h1>Manage</h1>
+    </div>
+  );
+};
 
 export default Manage;

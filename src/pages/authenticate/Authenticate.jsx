@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { redirect } from 'react-router-dom';
 import Countdown from 'react-countdown';
@@ -12,12 +13,6 @@ function Authenticate() {
   const [showError, setShowError] = useState(false);
 
   const [avatar, setAvatar] = useState('https://placehold.co/100x100?text=Avatar');
-  const [venueManager, setVenueManager] = useState(false);
-
-  const handleVenueManager = (e) => {
-    console.log(e.target.value);
-    setVenueManager(e.target.value);
-  };
 
   const renderer = ({ seconds, completed }) => {
     if (loggedIn) {
@@ -42,50 +37,62 @@ function Authenticate() {
 
   const {
     register,
-    handleSubmit,
     formState: { errors },
   } = useForm();
 
-  function onSubmit(data) {
+  const [body, setBody] = useState({
+    name: '',
+    email: '',
+    password: '',
+    avatar: '',
+    venueManager: false,
+  });
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setBody({
+      ...body,
+      [e.target.name]: value,
+    });
+    if (e.target.name === 'avatar') {
+      if (value === '') {
+        setAvatar('https://placehold.co/100x100?text=Avatar');
+      }
+      setAvatar(value);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(body);
     if (registerActive) {
-      fetch(`${API_URL_AUTH}/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: {
-          name: JSON.stringify(data.name),
-          email: JSON.stringify(data.email),
-          password: JSON.stringify(data.password),
-          avatar: avatar,
-          venueManager: venueManager,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          if (data.id) {
+      axios
+        .post(`${API_URL_AUTH}/register`, body)
+        .then((response) => {
+          console.log(response);
+          if (response.status === 400) {
+            console.log(response.statusText);
+            setShowError(true);
+            setRegisterd(false);
+            return;
+          } else if (response.status === 201) {
             setRegisterd(true);
+            setShowError(false);
+            return;
           }
         })
         .catch((error) => {
+          console.log(error.response.data.errors[0].message);
+          setShowError(true);
           setRegisterd(false);
-          console.log('Error:', error);
         });
     } else {
-      fetch(`${API_URL_AUTH}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
-      })
+      axios
+        .post(`${API_URL_AUTH}/login`, body)
         .then((response) => {
           console.log(response);
           if (response.status === 401) {
+            console.log(response.statusText);
             setShowError(true);
             setLoggedIn(false);
             return;
@@ -93,34 +100,25 @@ function Authenticate() {
             setShowError(true);
             setLoggedIn(false);
             return;
-          }
-        })
-        .then((data) => {
-          if (data.accessToken) {
+          } else if (response.accessToken) {
             setLoggedIn(true);
-            localStorage.setItem('accessToken', data.accessToken);
-            localStorage.setItem('name', JSON.stringify(data.name).replace(/['"]+/g, ''));
-            localStorage.setItem('email', JSON.stringify(data.email).replace(/['"]+/g, ''));
-            localStorage.setItem('avatar', JSON.stringify(data.avatar).replace(/['"]+/g, ''));
-            localStorage.setItem('venueManager', data.venueManager);
+            localStorage.setItem('accessToken', response.accessToken);
+            localStorage.setItem('name', JSON.stringify(response.name).replace(/['"]+/g, ''));
+            localStorage.setItem('email', JSON.stringify(response.email).replace(/['"]+/g, ''));
+            localStorage.setItem('avatar', JSON.stringify(response.avatar).replace(/['"]+/g, ''));
+            localStorage.setItem('venueManager', response.venueManager);
 
             alert('You are now logged in!');
             redirect('/');
           }
         })
         .catch((error) => {
-          console.log('Error:', error);
+          console.log(error.response.data.errors[0].message);
+          setShowError(true);
           setLoggedIn(false);
         });
     }
-  }
-
-  function handleAvatar(e) {
-    setAvatar(e.target.value);
-    if (e.target.value === '') {
-      setAvatar('https://placehold.co/100x100?text=Avatar');
-    }
-  }
+  };
 
   const emailValidation = {
     required: true,
@@ -159,7 +157,7 @@ function Authenticate() {
           </div>
           <div className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
             {loginActive && (
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleSubmit}>
                 <div className='mb-4'>
                   <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='email'>
                     Email
@@ -172,6 +170,8 @@ function Authenticate() {
                     id='email'
                     placeholder='Email'
                     type='email'
+                    value={body.email}
+                    onChange={handleChange}
                   />
                   {errors.email && (
                     <p className='text-red-500 text-xs italic'>Please enter a valid @stud.noroff.no email address.</p>
@@ -182,16 +182,18 @@ function Authenticate() {
                     Password
                   </label>
                   <input
-                    {...register('password', { required: true, minLength: 4 })}
+                    {...register('password', { required: true, minLength: 8 })}
                     className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                       errors.password ? 'border-red-500' : ''
                     }`}
                     id='password'
                     type='password'
+                    value={body.password}
+                    onChange={handleChange}
                     placeholder='******************'
                   />
                   {errors.password && (
-                    <p className='text-red-500 text-xs italic'>Password must be at least 4 characters.</p>
+                    <p className='text-red-500 text-xs italic'>Password must be at least 8 characters.</p>
                   )}
                 </div>
                 <div className='flex items-center justify-between'>
@@ -208,22 +210,24 @@ function Authenticate() {
             {loggedIn && <Countdown date={Date.now() + 5000} renderer={renderer} />}
             {showError && <p className='text-red-500 text-xs italic'>Wrong email or password!</p>}
             {registerActive && (
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleSubmit}>
                 <div className='mb-4'>
                   <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='name'>
                     Name
                   </label>
                   <input
-                    {...register('name', { required: true, minLength: 4 })}
+                    {...register('name', { required: true, minLength: 3 })}
                     className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                       errors.name ? 'border-red-500' : ''
                     }`}
                     id='name'
                     placeholder='Name'
                     type='text'
+                    value={body.name}
+                    onChange={handleChange}
                   />
                   {errors.username && (
-                    <p className='text-red-500 text-xs italic'>Username must be at least 4 characters.</p>
+                    <p className='text-red-500 text-xs italic'>Name must be at least 3 characters.</p>
                   )}
                 </div>
                 <div className='mb-4'>
@@ -238,6 +242,8 @@ function Authenticate() {
                     id='email'
                     placeholder='Email'
                     type='email'
+                    value={body.email}
+                    onChange={handleChange}
                   />
                   {errors.email && (
                     <p className='text-red-500 text-xs italic'>Please enter a valid @stud.noroff.no email address.</p>
@@ -248,16 +254,18 @@ function Authenticate() {
                     Password
                   </label>
                   <input
-                    {...register('password', { required: true, minLength: 4 })}
+                    {...register('password', { required: true, minLength: 8 })}
                     className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                       errors.password ? 'border-red-500' : ''
                     }`}
                     id='password'
                     type='password'
+                    value={body.password}
+                    onChange={handleChange}
                     placeholder='******************'
                   />
                   {errors.password && (
-                    <p className='text-red-500 text-xs italic'>Password must be at least 4 characters.</p>
+                    <p className='text-red-500 text-xs italic'>Password must be at least 8 characters.</p>
                   )}
                 </div>
                 <div className='mb-4'>
@@ -269,7 +277,8 @@ function Authenticate() {
                     id='avatar'
                     placeholder='Image URL'
                     name='Image URL'
-                    onChange={handleAvatar}
+                    value={body.avatar}
+                    onChange={handleChange}
                     className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                   />
                   <div className='w-1/2'>
@@ -280,10 +289,11 @@ function Authenticate() {
                   <label className='block text-gray-700 text-sm font-bold mb-2'>Are you a venue manager?</label>
                   <select
                     className='bg-blue-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 focus:border-gray-500 block p-2.5'
-                    onChange={handleVenueManager}
+                    value={body.venueManager}
+                    onChange={handleChange}
                   >
-                    <option value={true}>Yes</option>
-                    <option value={false}>No</option>
+                    <option value='false'>No</option>
+                    <option value='true'>Yes</option>
                   </select>
                 </div>
                 <div className='flex items-center justify-between'>
@@ -302,7 +312,7 @@ function Authenticate() {
                 <p className='text-green-500 text-l block italic'>
                   You have been registered successfully. Please login.
                 </p>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit}>
                   <div className='mb-4'>
                     <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='email'>
                       Email
@@ -314,6 +324,8 @@ function Authenticate() {
                       }`}
                       id='email'
                       placeholder='Email'
+                      value={body.email}
+                      onChange={handleChange}
                       type='email'
                     />
                     {errors.email && (
@@ -327,17 +339,19 @@ function Authenticate() {
                     <input
                       {...register('password', {
                         required: true,
-                        minLength: 4,
+                        minLength: 8,
                       })}
                       className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                         errors.password ? 'border-red-500' : ''
                       }`}
                       id='password'
                       type='password'
+                      value={body.password}
+                      onChange={handleChange}
                       placeholder='******************'
                     />
                     {errors.password && (
-                      <p className='text-red-500 text-xs italic'>Password must be at least 4 characters.</p>
+                      <p className='text-red-500 text-xs italic'>Password must be at least 8 characters.</p>
                     )}
                   </div>
                   <div className='flex items-center justify-between'>

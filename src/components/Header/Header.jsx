@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoMdLogOut } from 'react-icons/io';
-// _____________________________________________//
 
 const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
   const [name, setName] = useState('');
@@ -12,9 +11,12 @@ const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
   useEffect(() => {
     if (isLoggedIn) {
       setName(localStorage.getItem('name'));
-      setAvatar(localStorage.getItem('avatar'));
-      if (!avatar) {
-        setAvatar('https://placehold.co/100x100?text=Avatar');
+      const avatarStorage = localStorage.getItem('avatar');
+      console.log(avatarStorage);
+      if (avatarStorage) {
+        setAvatar(avatarStorage);
+      } else {
+        setAvatar('https://placehold.co/100x100?text=No+Avatar');
       }
     }
   }, [isLoggedIn]);
@@ -24,8 +26,7 @@ const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
       setAvatar(newAvatar);
       localStorage.setItem('avatar', newAvatar);
     }
-  }),
-    [newAvatar];
+  }, [newAvatar]);
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -34,6 +35,11 @@ const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
     setIsLoggedIn(false);
   };
 
+  const handleAvatarError = (e) => {
+    e.target.onerror = null;
+    e.target.src = 'https://placehold.co/100x100?text=No+Avatar';
+  };
+  console.log(avatar);
   return (
     <nav className='bg-blue-500 p-1'>
       <div className='container mx-auto flex justify-between items-center'>
@@ -56,7 +62,7 @@ const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
         {isLoggedIn ? (
           <div className='flex items-center space-x-2'>
             <div className='flex items-center'>
-              <img src={avatar} alt={name} className='h-12 w-12 rounded-full' />
+              <img src={avatar} alt={name} onError={handleAvatarError} className='h-12 w-12 rounded-full' />
               <Link to={`/profile/${name}`} className='text-white hover:text-blue-300 ml-2'>
                 <span className='text-white font-semibold'>{name}</span>
               </Link>

@@ -45,7 +45,7 @@ function App() {
     if (isLoggedIn) {
       setNewAvatar(localStorage.getItem('avatar'));
       if (!newAvatar) {
-        setNewAvatar('https://placehold.co/100x100?text=Avatar');
+        setNewAvatar('');
       }
     }
   });

@@ -2,40 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaWifi, FaParking, FaDog, FaBed } from 'react-icons/fa';
 import { API_URL } from '../../common/common';
+import { BounceLoader } from 'react-spinners';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const Home = () => {
   const [venues, setVenues] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const missingImage = (e) => {
-    e.target.src = 'https://placehold.co/600x400?text=Image+Not+Found';
-  };
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
     fetch(`${API_URL}/venues`)
       .then((res) => res.json())
       .then((json) => {
         setVenues(json);
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
       });
   }, []);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleScroll = () => {
-    const scrollY = window.scrollY;
-    const scrollTop = document.getElementById('scrollTop');
-
-    if (scrollY > 100) {
-      scrollTop.classList.add('block');
-      scrollTop.classList.remove('hidden');
+    if (showCalendar) {
+      document.body.style.overflow = 'hidden';
     } else {
-      scrollTop.classList.add('hidden');
-      scrollTop.classList.remove('block');
+      document.body.style.overflow = 'unset';
     }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showCalendar]);
+
+  const missingImage = (e) => {
+    e.target.src = 'https://placehold.co/600x400?text=Image+Not+Found';
   };
 
   const handleClick = () => {
@@ -43,19 +43,39 @@ const Home = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <BounceLoader color='#1D4ED8' size={100} />
+      </div>
+    );
   }
 
   return (
-    <div className='container mx-auto'>
-      <h1 className='ml-4 text-3xl font-bold my-4'>Venues</h1>
-      <div className='flex flex-row space-x-10 justify-center'>
-        <button id='show-calendar' className='bg-blue-500 text-white px-4 py-2 rounded-md'>
-          Show Calendar
+    <div className='container mx-auto w-11/12'>
+      {showCalendar && (
+        <div className='fixed inset-0 z-50 flex justify-center items-center bg-white bg-opacity-90'>
+          <div className='bg-white rounded-md shadow-md p-4'>
+            <Calendar onChange={setDate} value={date} />
+            <button
+              className='px-4 py-4 rounded-md text-white text-lg font-bold bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
+              onClick={() => setShowCalendar(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      <h1 className='text-3xl font-bold my-4'>Venues</h1>
+      <div className='flex flex-row space-x-12 mb-6'>
+        <button
+          className='px-6 py-4 rounded-md text-white text-lg font-bold bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
+          onClick={() => setShowCalendar(true)}
+        >
+          Select Date
         </button>
         <Link
           to='/create-venue'
-          className='px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
+          className='px-6 py-4 rounded-md text-white text-lg font-bold bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
         >
           Create Venue
         </Link>
@@ -105,7 +125,6 @@ const Home = () => {
       </div>
       <button
         onClick={handleClick}
-        id='scrollTop'
         className='fixed bottom-20 right-10 px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
       >
         Back to top

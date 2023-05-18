@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { FaBed, FaDog, FaWifi, FaParking } from 'react-icons/fa';
 import { IoMdCamera } from 'react-icons/io';
 import axios from 'axios';
-import { API_URL_PROFILES, API_URL_VENUES } from '../../common/common';
+import { API_URL_PROFILES } from '../../common/common';
 
 // eslint-disable-next-line react/prop-types
 const Profile = ({ setNewAvatar }) => {
@@ -51,13 +51,16 @@ const Profile = ({ setNewAvatar }) => {
   const closeModal = () => setModalOpen(false);
 
   const [venues, setVenues] = useState([]);
-  const venueUrl = `${API_URL_VENUES}?_owner=true`;
-  const getVenues = (name) => {
+  const venueUrl = `${url}/venues`;
+  const getVenues = () => {
     axios
-      .get(venueUrl)
+      .get(venueUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => {
-        const ownerName = res.data.filter((venue) => venue.owner === name);
-        setVenues(ownerName);
+        setVenues(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -71,9 +74,6 @@ const Profile = ({ setNewAvatar }) => {
           },
         });
 
-        if (response.data.avatar === '') {
-          response.data.avatar = 'https://placehold.co/100x100?text=Avatar';
-        }
         setProfile(response.data);
         getVenues(response.data.name);
       } catch (error) {

@@ -40,7 +40,7 @@ function Venue() {
   }
 
   return (
-    <div className='container mx-auto'>
+    <div className='container w-11/12 mx-auto'>
       <h1 className='text-3xl font-bold my-4'>{venue.name}</h1>
       <div className='mb-4'>
         <Modal

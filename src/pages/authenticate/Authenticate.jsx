@@ -13,6 +13,7 @@ function Authenticate({ setIsLoggedIn }) {
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [avatar, setAvatar] = useState('https://placehold.co/100x100?text=Avatar');
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     if (login !== null) {
@@ -20,10 +21,17 @@ function Authenticate({ setIsLoggedIn }) {
     }
   }, [login, setIsLoggedIn]);
 
+  useEffect(() => {
+    if (isCompleted) {
+      window.location.href = '/';
+    }
+  }),
+    [isCompleted];
+
   const renderer = ({ seconds, completed }) => {
     if (login) {
       if (completed) {
-        return <p>Redirecting...</p> && window.location.href === '/';
+        return setIsCompleted(true) && <p>Redirecting...</p>;
       } else {
         return (
           <div className='flex-1 flex-col justify-center text-center justify-items-center'>

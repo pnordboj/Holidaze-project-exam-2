@@ -1,23 +1,29 @@
-import React, { useState } from 'react';
+/* eslint-disable react/prop-types */
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { redirect } from 'react-router-dom';
 import Countdown from 'react-countdown';
 import { API_URL_AUTH } from '../../common/common';
 
-function Authenticate() {
+function Authenticate({ setIsLoggedIn }) {
   const [registerActive, setRegisterActive] = useState(false);
   const [registerd, setRegisterd] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [login, setLogin] = useState(false);
   const [loginActive, setLoginActive] = useState(true);
   const [showError, setShowError] = useState(false);
-
+  const [errorMsg, setErrorMsg] = useState('');
   const [avatar, setAvatar] = useState('https://placehold.co/100x100?text=Avatar');
 
+  useEffect(() => {
+    if (login !== null) {
+      setIsLoggedIn(login);
+    }
+  }, [login, setIsLoggedIn]);
+
   const renderer = ({ seconds, completed }) => {
-    if (loggedIn) {
+    if (login) {
       if (completed) {
-        return <p>Redirecting...</p> && redirect('/');
+        return <p>Redirecting...</p> && window.location.href === '/';
       } else {
         return (
           <div className='flex-1 flex-col justify-center text-center justify-items-center'>
@@ -48,41 +54,41 @@ function Authenticate() {
     venueManager: false,
   });
 
+  const handleAvatar = (e) => {
+    const value = e.target.value;
+    setAvatar(value);
+    setBody({
+      ...body,
+      avatar: value,
+    });
+    if (value === '') {
+      setAvatar('https://placehold.co/100x100?text=Avatar');
+    }
+  };
+
   const handleChange = (e) => {
     const value = e.target.value;
     setBody({
       ...body,
       [e.target.name]: value,
     });
-    if (e.target.name === 'avatar') {
-      if (value === '') {
-        setAvatar('https://placehold.co/100x100?text=Avatar');
-      }
-      setAvatar(value);
-    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(body);
     if (registerActive) {
       axios
         .post(`${API_URL_AUTH}/register`, body)
         .then((response) => {
-          console.log(response);
-          if (response.status === 400) {
-            console.log(response.statusText);
-            setShowError(true);
-            setRegisterd(false);
-            return;
-          } else if (response.status === 201) {
+          if (response.status === 201) {
             setRegisterd(true);
             setShowError(false);
             return;
           }
         })
-        .catch((error) => {
-          console.log(error.response.data.errors[0].message);
+        .catch((e) => {
+          const err = e.response.data.errors[0].message;
+          setErrorMsg(err);
           setShowError(true);
           setRegisterd(false);
         });
@@ -90,32 +96,30 @@ function Authenticate() {
       axios
         .post(`${API_URL_AUTH}/login`, body)
         .then((response) => {
-          console.log(response);
           if (response.status === 401) {
-            console.log(response.statusText);
             setShowError(true);
-            setLoggedIn(false);
+            setLogin(false);
             return;
           } else if (response.status === 403) {
             setShowError(true);
-            setLoggedIn(false);
+            setLogin(false);
             return;
-          } else if (response.accessToken) {
-            setLoggedIn(true);
-            localStorage.setItem('accessToken', response.accessToken);
-            localStorage.setItem('name', JSON.stringify(response.name).replace(/['"]+/g, ''));
-            localStorage.setItem('email', JSON.stringify(response.email).replace(/['"]+/g, ''));
-            localStorage.setItem('avatar', JSON.stringify(response.avatar).replace(/['"]+/g, ''));
-            localStorage.setItem('venueManager', response.venueManager);
-
-            alert('You are now logged in!');
-            redirect('/');
+          } else if (response.status === 200) {
+            setShowError(false);
+            localStorage.setItem('token', response.data.accessToken);
+            localStorage.setItem('name', response.data.name);
+            localStorage.setItem('email', response.data.email);
+            localStorage.setItem('avatar', response.data.avatar);
+            localStorage.setItem('venueManager', response.data.venueManager);
+            setLogin(true);
+            return;
           }
         })
-        .catch((error) => {
-          console.log(error.response.data.errors[0].message);
+        .catch((e) => {
+          const err = e.response.data.errors[0].message;
+          setErrorMsg(err);
           setShowError(true);
-          setLoggedIn(false);
+          setLogin(false);
         });
     }
   };
@@ -207,8 +211,29 @@ function Authenticate() {
                 </div>
               </form>
             )}
-            {loggedIn && <Countdown date={Date.now() + 5000} renderer={renderer} />}
-            {showError && <p className='text-red-500 text-xs italic'>Wrong email or password!</p>}
+            {login && <Countdown date={Date.now() + 5000} renderer={renderer} />}
+            {showError && (
+              <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative' role='alert'>
+                <strong className='font-bold'>Error!</strong>
+                <span className='block sm:inline'> {errorMsg}</span>
+                <span className='absolute top-0 bottom-0 right-0 px-4 py-3'>
+                  <svg
+                    className='fill-current h-6 w-6 text-red-500'
+                    role='button'
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 20 20'
+                    onClick={() => setShowError(false)}
+                  >
+                    <title>Close</title>
+                    <path
+                      fillRule='evenodd'
+                      d='M14.348 5.652a.5.5 0 010 .707L9.707 10l4.641 4.641a.5.5 0 11-.707.707L9 10.707l-4.641 4.64a.5.5 0 11-.707-.707L8.293 10 3.652 5.359a.5.5 0 01.707-.707L9 9.293l4.641-4.64a.5.5 0 01.707 0z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                </span>
+              </div>
+            )}
             {registerActive && (
               <form onSubmit={handleSubmit}>
                 <div className='mb-4'>
@@ -277,12 +302,11 @@ function Authenticate() {
                     id='avatar'
                     placeholder='Image URL'
                     name='Image URL'
-                    value={body.avatar}
-                    onChange={handleChange}
+                    onChange={handleAvatar}
                     className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                   />
                   <div className='w-1/2'>
-                    {avatar && <img src={avatar} alt='Preview' className='block w-full rounded-md my-4' />}
+                    {avatar && <img src={avatar} alt='image preview' className='block w-full rounded-md my-4' />}
                   </div>
                 </div>
                 <div className='mb-4 mt-4'>

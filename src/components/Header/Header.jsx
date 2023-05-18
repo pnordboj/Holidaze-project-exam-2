@@ -1,41 +1,38 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoMdLogOut } from 'react-icons/io';
+// _____________________________________________//
 
-const Nav = () => {
-  const accessToken = localStorage.getItem('accessToken');
+const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
+  const [name, setName] = useState('');
+  const [avatar, setAvatar] = useState('');
+
   useEffect(() => {
-    checkLogin();
-  }, [accessToken]);
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-
-  const checkLogin = () => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      setIsLoggedIn(true);
-      setUsername(localStorage.getItem('name'));
-    } else {
-      setIsLoggedIn(false);
+    if (isLoggedIn) {
+      setName(localStorage.getItem('name'));
+      setAvatar(localStorage.getItem('avatar'));
+      if (!avatar) {
+        setAvatar('https://placehold.co/100x100?text=Avatar');
+      }
     }
-  };
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (newAvatar) {
+      setAvatar(newAvatar);
+      localStorage.setItem('avatar', newAvatar);
+    }
+  }),
+    [newAvatar];
 
   const logout = () => {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('name');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('email');
     localStorage.removeItem('avatar');
     setIsLoggedIn(false);
   };
-
-  const name = localStorage.getItem('name');
-
-  useEffect(() => {
-    checkLogin();
-  }, []);
 
   return (
     <nav className='bg-blue-500 p-1'>
@@ -58,12 +55,10 @@ const Nav = () => {
         )}
         {isLoggedIn ? (
           <div className='flex items-center space-x-2'>
-            <div className='flex flex-col items-center'>
-              <Link to={`/profile/${name}`} className='text-white hover:text-blue-300 '>
-                <FaUserCircle size={24} />
-              </Link>
-              <Link to={`/profile/${name}`} className='text-white hover:text-blue-300 '>
-                <span className='text-white font-semibold'>{username}</span>
+            <div className='flex items-center'>
+              <img src={avatar} alt={name} className='h-12 w-12 rounded-full' />
+              <Link to={`/profile/${name}`} className='text-white hover:text-blue-300 ml-2'>
+                <span className='text-white font-semibold'>{name}</span>
               </Link>
             </div>
             <button onClick={logout} className='text-white hover:text-blue-300'>
@@ -85,10 +80,10 @@ const Nav = () => {
   );
 };
 
-const Header = () => {
+const Header = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
   return (
     <header className='bg-blue-500 p-4'>
-      <Nav />
+      <Nav isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} newAvatar={newAvatar} />
     </header>
   );
 };

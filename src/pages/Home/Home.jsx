@@ -48,7 +48,19 @@ const Home = () => {
 
   return (
     <div className='container mx-auto'>
-      <h1 className='text-3xl font-bold my-4'>Venues</h1>
+      <h1 className='ml-4 text-3xl font-bold my-4'>Venues</h1>
+      <div className='flex flex-row space-x-10 justify-center'>
+        <button id='show-calendar' className='bg-blue-500 text-white px-4 py-2 rounded-md'>
+          Show Calendar
+        </button>
+        <Link
+          to='/create-venue'
+          className='px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
+        >
+          Create Venue
+        </Link>
+      </div>
+
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
         {venues.map((venue) => (
           <div key={venue.id} className='bg-white shadow-md rounded-md p-4 cursor-pointer hover:bg-blue-100'>
@@ -98,13 +110,6 @@ const Home = () => {
       >
         Back to top
       </button>
-
-      <Link
-        to='/create-venue'
-        className='fixed bottom-20 left-10 px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
-      >
-        Create Venue
-      </Link>
     </div>
   );
 };

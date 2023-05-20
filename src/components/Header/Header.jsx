@@ -62,7 +62,9 @@ const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
         {isLoggedIn ? (
           <div className='flex items-center space-x-2'>
             <div className='flex items-center'>
-              <img src={avatar} alt={name} onError={handleAvatarError} className='h-12 w-12 rounded-full' />
+              <Link to={`/profile/${name}`} className='text-white hover:text-blue-300 ml-2'>
+                <img src={avatar} alt={name} onError={handleAvatarError} className='h-12 w-12 rounded-full' />
+              </Link>
               <Link to={`/profile/${name}`} className='text-white hover:text-blue-300 ml-2'>
                 <span className='text-white font-semibold'>{name}</span>
               </Link>

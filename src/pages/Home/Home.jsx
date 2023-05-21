@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaWifi, FaParking, FaDog, FaBed } from 'react-icons/fa';
 import { API_URL } from '../../common/common';
+import { BackToTop } from '../../components/Buttons/BackToTop';
 import { BounceLoader } from 'react-spinners';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -36,10 +37,6 @@ const Home = () => {
 
   const missingImage = (e) => {
     e.target.src = 'https://placehold.co/600x400?text=Image+Not+Found';
-  };
-
-  const handleClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (isLoading) {
@@ -81,7 +78,7 @@ const Home = () => {
         </Link>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+      <div className='grid grid-cols-1 md:grid-cols-2 mb-24 lg:grid-cols-3 gap-4'>
         {venues.map((venue) => (
           <div key={venue.id} className='bg-white shadow-md rounded-md p-4 cursor-pointer hover:bg-blue-100'>
             <Link to={`/venue/${venue.id}`}>
@@ -123,12 +120,7 @@ const Home = () => {
           </div>
         ))}
       </div>
-      <button
-        onClick={handleClick}
-        className='fixed bottom-20 right-10 px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
-      >
-        Back to top
-      </button>
+      <BackToTop />
     </div>
   );
 };

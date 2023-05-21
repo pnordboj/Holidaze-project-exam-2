@@ -92,7 +92,7 @@ const Profile = ({ setNewAvatar }) => {
     <div>
       <div className='bg-blue-500 p-4 relative'>
         <div
-          className='group cursor-pointer rounded-full h-24 w-24 mx-auto border-4 border-blue-300 shadow-lg mb-4 overflow-hidden'
+          className='group cursor-pointer rounded-full h-32 w-32 mx-auto border-4 border-blue-300 shadow-lg mb-4 overflow-hidden'
           onClick={openModal}
         >
           <div className='relative h-full w-full'>

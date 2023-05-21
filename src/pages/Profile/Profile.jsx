@@ -19,6 +19,9 @@ const Profile = ({ setNewAvatar }) => {
     venueManager: false,
   });
 
+  const [venues, setVenues] = useState([]);
+  const [bookedVenues, setBookedVenues] = useState([]);
+
   const userAvatar = profile.avatar;
   const [avatarUrl, setAvatarUrl] = useState(userAvatar);
 
@@ -50,7 +53,6 @@ const Profile = ({ setNewAvatar }) => {
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
-  const [venues, setVenues] = useState([]);
   const venueUrl = `${url}/venues`;
   const getVenues = () => {
     axios
@@ -65,6 +67,20 @@ const Profile = ({ setNewAvatar }) => {
       .catch((err) => console.log(err));
   };
 
+  const getBookedVenues = () => {
+    const bookedVenueUrl = `${url}/booked-venues`;
+    axios
+      .get(bookedVenueUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setBookedVenues(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     const getProfile = async () => {
       try {
@@ -75,7 +91,11 @@ const Profile = ({ setNewAvatar }) => {
         });
 
         setProfile(response.data);
-        getVenues(response.data.name);
+        if (!response.data.venueManager) {
+          getBookedVenues();
+        } else {
+          getVenues(response.data.name);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -113,46 +133,87 @@ const Profile = ({ setNewAvatar }) => {
       <div className='container mx-auto my-6'>
         <h3 className='ml-4 text-2xl font-semibold mb-4'>Listings</h3>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {venues.map((venue) => (
-            <div key={venue.id} className='bg-white shadow-md rounded-md p-4 cursor-pointer hover:bg-blue-100'>
-              <Link to={`/venue/${venue.id}`}>
-                <div className='relative h-48 rounded-md overflow-hidden'>
-                  <img
-                    src={venue.media}
-                    onError={missingImage}
-                    alt={venue.name}
-                    className='absolute inset-0 w-full h-full object-cover rounded-md'
-                  />
-                  <div className='absolute inset-0 bg-black opacity-0 hover:opacity-75 transition-opacity duration-300'>
-                    <div className='flex flex-col items-center justify-center h-full text-white'>
-                      <h2 className='text-xl font-semibold mb-2'>{venue.name}</h2>
-                      <div className='mt-2 flex flex-wrap justify-center items-center'>
-                        <span className='mr-4 flex items-center'>
-                          <FaBed className='mr-1' />
-                          {venue.maxGuests} Guests
-                        </span>
-                        <span className='mr-4 flex items-center'>
-                          <FaDog className='mr-1' />
-                          {venue.meta.pets ? 'Pets Allowed' : 'No Pets Allowed'}
-                        </span>
-                        <span className='mr-4 flex items-center'>
-                          <FaWifi className='mr-1' />
-                          {venue.meta.wifi ? 'Wifi Available' : 'No Wifi'}
-                        </span>
-                        <span className='mr-4 flex items-center'>
-                          <FaParking className='mr-1' />
-                          {venue.meta.parking ? 'Parking Available' : 'No Parking'}
-                        </span>
+          {profile.venueManager
+            ? venues.map((venue) => (
+                <div key={venue.id} className='bg-white shadow-md rounded-md p-4 cursor-pointer hover:bg-blue-100'>
+                  <Link to={`/venue/${venue.id}`}>
+                    <div className='relative h-48 rounded-md overflow-hidden'>
+                      <img
+                        src={venue.media}
+                        onError={missingImage}
+                        alt={venue.name}
+                        className='absolute inset-0 w-full h-full object-cover rounded-md'
+                      />
+                      <div className='absolute inset-0 bg-black opacity-0 hover:opacity-75 transition-opacity duration-300'>
+                        <div className='flex flex-col items-center justify-center h-full text-white'>
+                          <h2 className='text-xl font-semibold mb-2'>{venue.name}</h2>
+                          <div className='mt-2 flex flex-wrap justify-center items-center'>
+                            <span className='mr-4 flex items-center'>
+                              <FaBed className='mr-1' />
+                              {venue.maxGuests} Guests
+                            </span>
+                            <span className='mr-4 flex items-center'>
+                              <FaDog className='mr-1' />
+                              {venue.meta.pets ? 'Pets Allowed' : 'No Pets Allowed'}
+                            </span>
+                            <span className='mr-4 flex items-center'>
+                              <FaWifi className='mr-1' />
+                              {venue.meta.wifi ? 'Wifi Available' : 'No Wifi'}
+                            </span>
+                            <span className='mr-4 flex items-center'>
+                              <FaParking className='mr-1' />
+                              {venue.meta.parking ? 'Parking Available' : 'No Parking'}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                    <div className='mt-4 flex items-center justify-between'>
+                      <span className='text-blue-500 font-semibold'>${venue.price}/night</span>
+                    </div>
+                  </Link>
                 </div>
-                <div className='mt-4 flex items-center justify-between'>
-                  <span className='text-blue-500 font-semibold'>${venue.price}/night</span>
+              ))
+            : bookedVenues.map((venue) => (
+                <div key={venue.id} className='bg-white shadow-md rounded-md p-4 cursor-pointer hover:bg-blue-100'>
+                  <Link to={`/venue/${venue.id}`}>
+                    <div className='relative h-48 rounded-md overflow-hidden'>
+                      <img
+                        src={venue.media}
+                        onError={missingImage}
+                        alt={venue.name}
+                        className='absolute inset-0 w-full h-full object-cover rounded-md'
+                      />
+                      <div className='absolute inset-0 bg-black opacity-0 hover:opacity-75 transition-opacity duration-300'>
+                        <div className='flex flex-col items-center justify-center h-full text-white'>
+                          <h2 className='text-xl font-semibold mb-2'>{venue.name}</h2>
+                          <div className='mt-2 flex flex-wrap justify-center items-center'>
+                            <span className='mr-4 flex items-center'>
+                              <FaBed className='mr-1' />
+                              {venue.maxGuests} Guests
+                            </span>
+                            <span className='mr-4 flex items-center'>
+                              <FaDog className='mr-1' />
+                              {venue.meta.pets ? 'Pets Allowed' : 'No Pets Allowed'}
+                            </span>
+                            <span className='mr-4 flex items-center'>
+                              <FaWifi className='mr-1' />
+                              {venue.meta.wifi ? 'Wifi Available' : 'No Wifi'}
+                            </span>
+                            <span className='mr-4 flex items-center'>
+                              <FaParking className='mr-1' />
+                              {venue.meta.parking ? 'Parking Available' : 'No Parking'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='mt-4 flex items-center justify-between'>
+                      <span className='text-blue-500 font-semibold'>${venue.price}/night</span>
+                    </div>
+                  </Link>
                 </div>
-              </Link>
-            </div>
-          ))}
+              ))}
         </div>
       </div>
       {modalOpen && (

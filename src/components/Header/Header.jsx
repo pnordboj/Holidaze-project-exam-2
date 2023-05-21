@@ -12,7 +12,6 @@ const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
     if (isLoggedIn) {
       setName(localStorage.getItem('name'));
       const avatarStorage = localStorage.getItem('avatar');
-      console.log(avatarStorage);
       if (avatarStorage) {
         setAvatar(avatarStorage);
       } else {

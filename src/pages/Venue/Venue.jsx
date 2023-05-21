@@ -5,11 +5,17 @@ import { useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import Modal from 'react-modal';
 import { API_URL_VENUES } from '../../common/common';
+import { Maps } from '../../components/Maps/Maps';
 
 function Venue() {
   const [isOpen, setIsOpen] = useState(false);
   const [venue, setVenue] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const location = {
+    lat: '',
+    lng: '',
+  };
 
   const missingImage = (e) => {
     e.target.src = 'https://placehold.co/600x400?text=Image+Not+Found';
@@ -21,9 +27,24 @@ function Venue() {
       .then((res) => res.json())
       .then((json) => {
         setVenue(json);
+        if (json.location.lat && json.location.lng !== 0) {
+          location.lat = json.location.lat;
+          location.lng = json.location.lng;
+        } else {
+          location.lat = 0;
+          location.lng = 0;
+        }
         setIsLoading(false);
       });
   }, [params]);
+
+  const Map = () => {
+    if (location.lat && location.lng !== 0) {
+      return <div className='w-full h-96'>No map available</div>;
+    } else {
+      <Maps lat={location.lat} lng={location.lng} />;
+    }
+  };
 
   const sliderSettings = {
     dots: true,
@@ -121,6 +142,8 @@ function Venue() {
               <FaMapMarkerAlt className='mr-2' />
               <span className='ml-1'>{venue.location.address}</span>
             </div>
+
+            <Map />
           </div>
         </div>
       </div>

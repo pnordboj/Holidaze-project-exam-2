@@ -19,6 +19,7 @@ function Venue({ isLoggedIn }) {
 	const [showCalendar, setShowCalendar] = useState(false);
 	const [date, setDate] = useState(new Date());
 	const [isOwner, setIsOwner] = useState(false);
+	const [modalIsOpen, setModalIsOpen] = useState(false);
 
 	useEffect(() => {
 		if (showCalendar) {
@@ -93,6 +94,20 @@ function Venue({ isLoggedIn }) {
 		return <div>Loading...</div>;
 	}
 
+	const openModal = () => {
+		setModalIsOpen(true);
+	};
+
+	const closeModal = () => {
+		setModalIsOpen(false);
+	};
+
+	const deleteVenue = () => {
+		axios.delete(`${API_URL_VENUES}/${params}`).then((res) => {
+			console.log(res);
+		});
+	};
+
 	return (
 		<div className='container w-11/12 mx-auto'>
 			{showCalendar && (
@@ -111,12 +126,50 @@ function Venue({ isLoggedIn }) {
 			<div className='container mx-auto mb-8'>
 				<h1 className='text-3xl font-bold my-4'>{venue.name}</h1>
 				{isOwner && (
-					<Link
-						to={`/manage/${venue.id}`}
-						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded'
-					>
-						Edit Venue
-					</Link>
+					<div className='space-x-6'>
+						<Link
+							to={`/manage/${venue.id}`}
+							className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded'
+						>
+							Edit Venue
+						</Link>
+						<button
+							type='button'
+							onClick={openModal}
+							className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 text-l rounded'
+						>
+							Delete Venue
+						</button>
+						<Modal
+							isOpen={modalIsOpen}
+							onRequestClose={closeModal}
+							className='w-9/12 h-auto outline-none'
+							overlayClassName='fixed inset-0 z-50 flex justify-center items-center bg-white bg-opacity-90'
+						>
+							<span className='cursor-pointer right-1 z-40 text-white absolute text-4xl' onClick={closeModal}>
+								<MdFullscreenExit />
+							</span>
+							<div className='flex flex-col justify-center items-center'>
+								<h1 className='text-3xl font-bold my-4'>Are you sure you want to delete this venue?</h1>
+								<div className='space-x-6'>
+									<button
+										type='button'
+										onClick={closeModal}
+										className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded'
+									>
+										Cancel
+									</button>
+									<button
+										type='button'
+										onClick={deleteVenue}
+										className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 text-l rounded'
+									>
+										Delete
+									</button>
+								</div>
+							</div>
+						</Modal>
+					</div>
 				)}
 			</div>
 			<div className='mb-4'>

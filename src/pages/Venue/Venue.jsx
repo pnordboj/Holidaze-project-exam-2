@@ -216,7 +216,7 @@ function Venue({ isLoggedIn }) {
 							className='w-full h-64 object-contain shadow-lg rounded-md mb-4 bg-slate-500'
 						/>
 					)}
-					<div className='mt-4 flex items-center justify-between'>
+					<div className='mt-4 flex flex-col w-fit'>
 						<span className='text-blue-500 font-semibold'>${venue.price}/night</span>
 						{isLoggedIn ? (
 							<button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>Book Now</button>
@@ -226,24 +226,24 @@ function Venue({ isLoggedIn }) {
 							</Link>
 						)}
 					</div>
-					<div className='mt-4 flex items-center'>
-						<span className='mr-2'>
+					<div className='mt-4 flex flex-col'>
+						<span className='mr-2 flex flex-row mb-2'>
 							<FaBed />
 							<span className='ml-1'>{venue.maxGuests} Guests</span>
 						</span>
-						<span className='mr-2'>
+						<span className='mr-2 flex flex-row mb-2'>
 							<FaDog />
 							<span className='ml-1'>{venue.meta.pets ? 'Pets Allowed' : 'No Pets Allowed'}</span>
 						</span>
-						<span className='mr-2'>
+						<span className='mr-2 flex flex-row mb-2'>
 							<FaWifi />
 							<span className='ml-1'>{venue.meta.wifi ? 'Wifi Available' : 'No Wifi'}</span>
 						</span>
-						<span className='mr-2'>
+						<span className='mr-2 flex flex-row mb-2'>
 							<FaParking />
 							<span className='ml-1'>{venue.meta.parking ? 'Parking Available' : 'No Parking'}</span>
 						</span>
-						<span className='mr-2'>
+						<span className='mr-2 flex flex-row mb-2'>
 							<MdFoodBank />
 							<span className='ml-1'>{venue.meta.breakfast ? 'Breakfast Included' : 'No Breakfast'}</span>
 						</span>

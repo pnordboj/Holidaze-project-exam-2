@@ -103,9 +103,16 @@ function Venue({ isLoggedIn }) {
 	};
 
 	const deleteVenue = () => {
-		axios.delete(`${API_URL_VENUES}/${params}`).then((res) => {
-			console.log(res);
-		});
+		axios
+			.delete(`${API_URL_VENUES}/${params}`, {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('token')}`,
+				},
+			})
+			.then((res) => {
+				console.log(res);
+				window.location.href = '/';
+			});
 	};
 
 	return (

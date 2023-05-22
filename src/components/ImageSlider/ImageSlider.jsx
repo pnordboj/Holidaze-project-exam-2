@@ -27,8 +27,8 @@ export const ImageSlider = ({ media = [] }) => {
 		<div className='relative'>
 			<Slider {...settings}>
 				{media.map((image, index) => (
-					<div key={index} className='mx-auto w-128 h-128 flex justify-center'>
-						<img src={image} alt='Venue' className='rounded object-contain w-128 h-128' />
+					<div key={index} className='mx-auto w-128 h-128'>
+						<img src={image} alt='Venue' className='rounded text-center object-contain w-128 h-128' />
 					</div>
 				))}
 			</Slider>

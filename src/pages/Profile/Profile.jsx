@@ -68,7 +68,7 @@ const Profile = ({ setNewAvatar }) => {
   };
 
   const getBookedVenues = () => {
-    const bookedVenueUrl = `${url}/booked-venues`;
+    const bookedVenueUrl = `${url}/bookings`;
     axios
       .get(bookedVenueUrl, {
         headers: {
@@ -170,6 +170,7 @@ const Profile = ({ setNewAvatar }) => {
                     </div>
                     <div className='mt-4 flex items-center justify-between'>
                       <span className='text-blue-500 font-semibold'>${venue.price}/night</span>
+                      <span className='text-gray-600 font-semibold'>{venue.name}</span>
                     </div>
                   </Link>
                 </div>
@@ -210,6 +211,7 @@ const Profile = ({ setNewAvatar }) => {
                     </div>
                     <div className='mt-4 flex items-center justify-between'>
                       <span className='text-blue-500 font-semibold'>${venue.price}/night</span>
+                      <span className='text-gray-600 font-semibold'>{venue.name}</span>
                     </div>
                   </Link>
                 </div>

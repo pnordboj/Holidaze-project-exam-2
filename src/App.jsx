@@ -50,6 +50,17 @@ function App() {
     }
   });
 
+  const [isManager, setIsManager] = useState(false);
+
+  useEffect(() => {
+    const venueManager = localStorage.getItem('venueManager');
+    if (venueManager) {
+      setIsManager(true);
+    } else {
+      setIsManager(false);
+    }
+  });
+
   return (
     <div>
       <Routes>
@@ -57,11 +68,11 @@ function App() {
           path='/'
           element={<Layout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} newAvatar={newAvatar} />}
         >
-          <Route index element={<Home />} />
+          <Route index element={<Home isLoggedIn={isLoggedIn} />} />
           <Route path='login' element={<Authenticate setIsLoggedIn={setIsLoggedIn} />} />
           <Route path='manage/:id' element={<Manage />} />
           <Route path='profile/:id' element={<Profile setNewAvatar={setNewAvatar} />} />
-          <Route path='venue/:id' element={<Venue />} />
+          <Route path='venue/:id' element={<Venue isLoggedIn={isLoggedIn} isManager={isManager} />} />
           <Route path='create-venue' element={<CreateVenue />} />
           <Route path='*' element={<NotFound />} />
         </Route>

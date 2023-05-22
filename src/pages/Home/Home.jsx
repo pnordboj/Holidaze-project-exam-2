@@ -1,13 +1,14 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaWifi, FaParking, FaDog, FaBed } from 'react-icons/fa';
 import { API_URL } from '../../common/common';
 import { BackToTop } from '../../components/Buttons/BackToTop';
-import { BounceLoader } from 'react-spinners';
+import { Loader } from '../../components/Loader/Loader';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-const Home = () => {
+const Home = ({ isLoggedIn }) => {
   const [venues, setVenues] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCalendar, setShowCalendar] = useState(false);
@@ -42,7 +43,7 @@ const Home = () => {
   if (isLoading) {
     return (
       <div className='flex justify-center items-center h-screen'>
-        <BounceLoader color='#1D4ED8' size={100} />
+        <Loader />
       </div>
     );
   }
@@ -70,17 +71,22 @@ const Home = () => {
         >
           Select Date
         </button>
-        <Link
-          to='/create-venue'
-          className='px-6 py-4 rounded-md text-white text-lg font-bold bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
-        >
-          Create Venue
-        </Link>
+        {isLoggedIn && (
+          <Link
+            to='/create-venue'
+            className='px-6 py-4 rounded-md text-white text-lg font-bold bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
+          >
+            Create Venue
+          </Link>
+        )}
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-2 mb-24 lg:grid-cols-3 gap-4'>
         {venues.map((venue) => (
-          <div key={venue.id} className='bg-white shadow-md rounded-md p-4 cursor-pointer hover:bg-blue-100'>
+          <div
+            key={venue.id}
+            className='bg-white shadow-md border border-blue-200 rounded-md p-4 cursor-pointer hover:bg-blue-100'
+          >
             <Link to={`/venue/${venue.id}`}>
               <div className='relative h-48 rounded-md overflow-hidden'>
                 <img
@@ -115,6 +121,7 @@ const Home = () => {
               </div>
               <div className='mt-4 flex items-center justify-between'>
                 <span className='text-blue-500 font-semibold'>${venue.price}/night</span>
+                <span className='text-gray-600 font-semibold'>{venue.name}</span>
               </div>
             </Link>
           </div>

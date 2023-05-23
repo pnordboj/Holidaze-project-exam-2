@@ -9,28 +9,14 @@ import Slider from 'react-slick';
 import Modal from 'react-modal';
 import { API_URL_VENUES } from '../../common/common';
 import { Maps } from '../../components/Maps/Maps';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import { Booking } from '../../components/Booking/Booking';
 
 function Venue({ isLoggedIn }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [venue, setVenue] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [showCalendar, setShowCalendar] = useState(false);
-	const [date, setDate] = useState(new Date());
 	const [isOwner, setIsOwner] = useState(false);
 	const [modalIsOpen, setModalIsOpen] = useState(false);
-
-	useEffect(() => {
-		if (showCalendar) {
-			document.body.style.overflow = 'hidden';
-		} else {
-			document.body.style.overflow = 'unset';
-		}
-		return () => {
-			document.body.style.overflow = 'unset';
-		};
-	}, [showCalendar]);
 
 	const location = {
 		lat: '',
@@ -86,9 +72,8 @@ function Venue({ isLoggedIn }) {
 		speed: 500,
 		slidesToShow: 1,
 		slidesToScroll: 1,
+		centerMode: true,
 	};
-
-	console.log(venue);
 
 	if (isLoading) {
 		return <div>Loading...</div>;
@@ -116,20 +101,7 @@ function Venue({ isLoggedIn }) {
 	};
 
 	return (
-		<div className='container w-11/12 mx-auto'>
-			{showCalendar && (
-				<div className='fixed inset-0 z-50 flex justify-center items-center bg-white bg-opacity-90'>
-					<div className='bg-white rounded-md shadow-md p-4'>
-						<Calendar onChange={setDate} value={date} />
-						<button
-							className='px-4 py-4 rounded-md text-white text-lg font-bold bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
-							onClick={() => setShowCalendar(false)}
-						>
-							Close
-						</button>
-					</div>
-				</div>
-			)}
+		<div className='container w-11/12 mx-auto mb-32'>
 			<div className='container mx-auto mb-8'>
 				<h1 className='text-3xl font-bold my-4'>{venue.name}</h1>
 				{isOwner && (
@@ -153,7 +125,10 @@ function Venue({ isLoggedIn }) {
 							className='w-9/12 h-auto outline-none'
 							overlayClassName='fixed inset-0 z-50 flex justify-center items-center bg-white bg-opacity-90'
 						>
-							<span className='cursor-pointer right-1 z-40 text-white absolute text-4xl' onClick={closeModal}>
+							<span
+								className='cursor-pointer z-40 text-white absolute top-4 right-4 text-6xl rounded-full bg-blue-600 bg-opacity-50 p-2'
+								onClick={closeModal}
+							>
 								<MdFullscreenExit />
 							</span>
 							<div className='flex flex-col justify-center items-center'>
@@ -179,27 +154,31 @@ function Venue({ isLoggedIn }) {
 					</div>
 				)}
 			</div>
-			<div className='mb-4'>
-				<Modal
-					isOpen={isOpen}
-					onRequestClose={() => setIsOpen(false)}
-					className='w-9/12 h-auto outline-none'
-					overlayClassName='fixed inset-0 z-50 flex justify-center items-center bg-white bg-opacity-90'
-				>
-					<span className='cursor-pointer right-1 z-40 text-white absolute text-4xl' onClick={() => setIsOpen(false)}>
-						<MdFullscreenExit />
-					</span>
-					{venue.media.length > 1 ? (
-						<Slider {...sliderSettings}>
-							{venue.media.map((image, index) => (
-								<img key={index} src={image} alt={venue.name} className='object-contain w-full h-full' />
-							))}
-						</Slider>
-					) : (
-						<img src={venue.media} alt={venue.name} className='object-contain w-full h-full' />
-					)}
-				</Modal>
-				<div className='mb-4'>
+			<div className='mb-4 flex flex-col md:flex-row'>
+				<div className='md:w-2/3 md:pr-4'>
+					<Modal
+						isOpen={isOpen}
+						onRequestClose={() => setIsOpen(false)}
+						className='w-9/12 h-auto outline-none'
+						overlayClassName='fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-90'
+					>
+						<span
+							className='cursor-pointer z-40 text-white absolute top-4 right-4 text-6xl rounded-full bg-blue-600 bg-opacity-50 p-2'
+							onClick={() => setIsOpen(false)}
+						>
+							<MdFullscreenExit />
+						</span>
+						{venue.media.length > 1 ? (
+							<Slider {...sliderSettings}>
+								{venue.media.map((image, index) => (
+									<img key={index} src={image} alt={venue.name} className='w-8/12 h-8/12 mx-auto' />
+								))}
+							</Slider>
+						) : (
+							<img src={venue.media} alt={venue.name} className='w-8/12 h-8/12 mx-auto' />
+						)}
+					</Modal>
+
 					{venue.media.length > 1 ? (
 						<Slider {...sliderSettings}>
 							{venue.media.map((image) => (
@@ -223,17 +202,9 @@ function Venue({ isLoggedIn }) {
 							className='w-full h-64 object-contain shadow-lg rounded-md mb-4 bg-slate-500'
 						/>
 					)}
-					<div className='mt-4 flex flex-col w-fit'>
-						<span className='text-blue-500 font-semibold'>${venue.price}/night</span>
-						{isLoggedIn ? (
-							<button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>Book Now</button>
-						) : (
-							<Link to='/login' className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>
-								Login to Book
-							</Link>
-						)}
-					</div>
-					<div className='mt-4 flex flex-col'>
+				</div>
+				<div className='md:w-1/3 md:pl-4 flex flex-col'>
+					<div className='mb-4 bg-white bg-opacity-80 p-4 rounded shadow-lg w-fit border border-blue-300'>
 						<span className='mr-2 flex flex-row mb-2'>
 							<FaBed />
 							<span className='ml-1'>{venue.maxGuests} Guests</span>
@@ -255,20 +226,23 @@ function Venue({ isLoggedIn }) {
 							<span className='ml-1'>{venue.meta.breakfast ? 'Breakfast Included' : 'No Breakfast'}</span>
 						</span>
 					</div>
-					<div className='mt-4'>
-						<div className='font-bold text-gray-500 mb-2'>Description:</div>
-						<p>{venue.description}</p>
-					</div>
-					<div className='mt-4'>
-						<div className='font-bold text-gray-500 mb-2'>Location:</div>
-						<div className='flex items-center'>
-							<FaMapMarkerAlt className='mr-2' />
-							<span className='ml-1'>{venue.location.address}</span>
-						</div>
-
-						<Map />
+					<div className='mt-4 flex flex-col w-full'>
+						<span className='text-blue-500 font-semibold'>${venue.price}/night</span>
+						<Booking venue={venue.id} isLoggedIn={isLoggedIn} />
 					</div>
 				</div>
+			</div>
+			<div className='mt-4'>
+				<div className='font-bold text-gray-500 mb-2'>Description:</div>
+				<p>{venue.description}</p>
+			</div>
+			<div className='mt-4'>
+				<div className='font-bold text-gray-500 mb-2'>Location:</div>
+				<div className='flex items-center'>
+					<FaMapMarkerAlt className='mr-2' />
+					<span className='ml-1'>{venue.location.address}</span>
+				</div>
+				<Map />
 			</div>
 		</div>
 	);

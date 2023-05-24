@@ -17,68 +17,68 @@ import Footer from './components/Footer/Footer';
 
 // eslint-disable-next-line react/prop-types
 function Layout({ isLoggedIn, setIsLoggedIn, newAvatar }) {
-  return (
-    <div>
-      <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} newAvatar={newAvatar} />
-      <Outlet />
-      <Footer />
-    </div>
-  );
+	return (
+		<div>
+			<Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} newAvatar={newAvatar} />
+			<Outlet />
+			<Footer />
+		</div>
+	);
 }
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  }),
-    [];
+	useEffect(() => {
+		const token = localStorage.getItem('token');
+		if (token) {
+			setIsLoggedIn(true);
+		} else {
+			setIsLoggedIn(false);
+		}
+	}),
+		[];
 
-  const [newAvatar, setNewAvatar] = useState('');
+	const [newAvatar, setNewAvatar] = useState('');
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      setNewAvatar(localStorage.getItem('avatar'));
-      if (!newAvatar) {
-        setNewAvatar('');
-      }
-    }
-  });
+	useEffect(() => {
+		if (isLoggedIn) {
+			setNewAvatar(localStorage.getItem('avatar'));
+			if (!newAvatar) {
+				setNewAvatar('');
+			}
+		}
+	});
 
-  const [isManager, setIsManager] = useState(false);
+	const [isManager, setIsManager] = useState(false);
 
-  useEffect(() => {
-    const venueManager = localStorage.getItem('venueManager');
-    if (venueManager) {
-      setIsManager(true);
-    } else {
-      setIsManager(false);
-    }
-  });
+	useEffect(() => {
+		const venueManager = localStorage.getItem('venueManager');
+		if (venueManager === 'true') {
+			setIsManager(true);
+		} else {
+			setIsManager(false);
+		}
+	});
 
-  return (
-    <div>
-      <Routes>
-        <Route
-          path='/'
-          element={<Layout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} newAvatar={newAvatar} />}
-        >
-          <Route index element={<Home isLoggedIn={isLoggedIn} />} />
-          <Route path='login' element={<Authenticate setIsLoggedIn={setIsLoggedIn} />} />
-          <Route path='manage/:id' element={<Manage />} />
-          <Route path='profile/:id' element={<Profile setNewAvatar={setNewAvatar} />} />
-          <Route path='venue/:id' element={<Venue isLoggedIn={isLoggedIn} isManager={isManager} />} />
-          <Route path='create-venue' element={<CreateVenue />} />
-          <Route path='*' element={<NotFound />} />
-        </Route>
-      </Routes>
-    </div>
-  );
+	return (
+		<div>
+			<Routes>
+				<Route
+					path='/'
+					element={<Layout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} newAvatar={newAvatar} />}
+				>
+					<Route index element={<Home isLoggedIn={isLoggedIn} isManager={isManager} />} />
+					<Route path='login' element={<Authenticate setIsLoggedIn={setIsLoggedIn} />} />
+					<Route path='manage/:id' element={<Manage />} />
+					<Route path='profile/:id' element={<Profile setNewAvatar={setNewAvatar} />} />
+					<Route path='venue/:id' element={<Venue isLoggedIn={isLoggedIn} isManager={isManager} />} />
+					<Route path='create-venue' element={<CreateVenue />} />
+					<Route path='*' element={<NotFound />} />
+				</Route>
+			</Routes>
+		</div>
+	);
 }
 
 export default App;

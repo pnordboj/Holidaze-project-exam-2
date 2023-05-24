@@ -25,8 +25,7 @@ function Authenticate({ setIsLoggedIn }) {
 		if (isCompleted) {
 			window.location.href = '/';
 		}
-	}),
-		[isCompleted];
+	}, [isCompleted]);
 
 	const renderer = ({ seconds, completed }) => {
 		if (login) {

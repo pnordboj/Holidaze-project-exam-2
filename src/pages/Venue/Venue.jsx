@@ -10,6 +10,7 @@ import Modal from 'react-modal';
 import { API_URL_VENUES } from '../../common/common';
 import { Maps } from '../../components/Maps/Maps';
 import { Booking } from '../../components/Booking/Booking';
+import { Loader } from '../../components/Loader/Loader';
 
 function Venue({ isLoggedIn }) {
 	const [isOpen, setIsOpen] = useState(false);
@@ -76,7 +77,11 @@ function Venue({ isLoggedIn }) {
 	};
 
 	if (isLoading) {
-		return <div>Loading...</div>;
+		return (
+			<div className='flex justify-center items-center h-screen'>
+				<Loader />
+			</div>
+		);
 	}
 
 	const openModal = () => {
@@ -228,7 +233,7 @@ function Venue({ isLoggedIn }) {
 					</div>
 					<div className='mt-4 flex flex-col w-full'>
 						<span className='text-blue-500 font-semibold'>${venue.price}/night</span>
-						<Booking venue={venue.id} isLoggedIn={isLoggedIn} />
+						<Booking venueId={venue.id} isLoggedIn={isLoggedIn} />
 					</div>
 				</div>
 			</div>

@@ -5,15 +5,11 @@ import { FaWifi, FaParking, FaDog, FaBed } from 'react-icons/fa';
 import { API_URL } from '../../common/common';
 import { BackToTop } from '../../components/Buttons/BackToTop';
 import { Loader } from '../../components/Loader/Loader';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 import axios from 'axios';
 
 const Home = ({ isLoggedIn, isManager }) => {
 	const [venues, setVenues] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [showCalendar, setShowCalendar] = useState(false);
-	const [date, setDate] = useState(new Date());
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -29,24 +25,8 @@ const Home = ({ isLoggedIn, isManager }) => {
 		fetchData();
 	}, []);
 
-	useEffect(() => {
-		document.body.style.overflow = showCalendar ? 'hidden' : 'unset';
-
-		return () => {
-			document.body.style.overflow = 'unset';
-		};
-	}, [showCalendar]);
-
 	const missingImage = (e) => {
 		e.target.src = 'https://placehold.co/600x400?text=Image+Not+Found';
-	};
-
-	const handleShowCalendar = () => {
-		setShowCalendar(true);
-	};
-
-	const handleCloseCalendar = () => {
-		setShowCalendar(false);
 	};
 
 	if (isLoading) {
@@ -55,27 +35,8 @@ const Home = ({ isLoggedIn, isManager }) => {
 
 	return (
 		<div className='container mx-auto w-11/12'>
-			{showCalendar && (
-				<div className='fixed inset-0 z-50 flex justify-center items-center bg-white bg-opacity-90'>
-					<div className='bg-white rounded-md shadow-md p-4'>
-						<Calendar onChange={setDate} value={date} />
-						<button
-							className='px-4 py-4 rounded-md text-white text-lg font-bold bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
-							onClick={handleCloseCalendar}
-						>
-							Close
-						</button>
-					</div>
-				</div>
-			)}
 			<h1 className='text-3xl font-bold my-4'>Venues</h1>
 			<div className='flex flex-row space-x-12 mb-6'>
-				<button
-					className='px-6 py-4 rounded-md text-white text-lg font-bold bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
-					onClick={handleShowCalendar}
-				>
-					Select Date
-				</button>
 				{isLoggedIn && isManager && (
 					<Link
 						to='/create-venue'

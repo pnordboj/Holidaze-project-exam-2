@@ -1,12 +1,14 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
-import { ImageSlider } from '../../components/ImageSlider/ImageSlider';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { FaWifi, FaParking, FaDog, FaBed, FaCheck } from 'react-icons/fa';
 import { API_URL_VENUES } from '../../common/common';
 import { useParams } from 'react-router-dom';
 import { BackNext } from '../../components/Buttons/BackNext';
+import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
+import 'pure-react-carousel/dist/react-carousel.es.css';
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 
 const Manage = () => {
 	const [meta, setMeta] = useState({
@@ -77,7 +79,16 @@ const Manage = () => {
 			data.lng = parseFloat(data.lng);
 			data.media = data.media.split(',').map((item) => item.trim());
 			axios
-				.put(url, data)
+				.put(
+					url,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${localStorage.getItem('token')}`,
+						},
+					},
+					data,
+				)
 				.then((res) => {
 					res = res.data;
 					console.log(res);
@@ -219,7 +230,32 @@ const Manage = () => {
 								id='images'
 								className='block w-full placeholder-gray-500 mt-1 border rounded-md p-2 shadow-sm focus:border-blue-500'
 							/>
-							<div>{media && media.length > 0 && <ImageSlider media={media} />}</div>
+							<div className='mt-4'>
+								<CarouselProvider
+									naturalSlideWidth={100}
+									naturalSlideHeight={100}
+									totalSlides={media.length}
+									isPlaying={true}
+									interval={3000}
+									infinite={true}
+								>
+									<Slider>
+										{media.map((image, index) => (
+											<Slide key={index} index={index}>
+												<img src={image} alt='room' className='w-full h-64 object-cover' />
+											</Slide>
+										))}
+									</Slider>
+									<div className='flex justify-center mt-4'>
+										<ButtonBack className='mr-4'>
+											<MdKeyboardArrowLeft className='w-6 h-6' />
+										</ButtonBack>
+										<ButtonNext>
+											<MdKeyboardArrowRight className='w-6 h-6' />
+										</ButtonNext>
+									</div>
+								</CarouselProvider>
+							</div>
 						</div>
 					</div>
 				)}

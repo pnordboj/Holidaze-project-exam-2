@@ -3,33 +3,25 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaWifi, FaParking, FaDog, FaBed, FaMapMarkerAlt } from 'react-icons/fa';
-import { MdFoodBank, MdFullscreenExit } from 'react-icons/md';
+import { MdFoodBank, MdFullscreenExit, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
-import Slider from 'react-slick';
+import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
+import 'pure-react-carousel/dist/react-carousel.es.css';
 import Modal from 'react-modal';
 import { API_URL_VENUES } from '../../common/common';
-import { Maps } from '../../components/Maps/Maps';
 import { Booking } from '../../components/Booking/Booking';
 import { Loader } from '../../components/Loader/Loader';
 
 function Venue({ isLoggedIn }) {
-	const [isOpen, setIsOpen] = useState(false);
 	const [venue, setVenue] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isOwner, setIsOwner] = useState(false);
 	const [modalIsOpen, setModalIsOpen] = useState(false);
-
-	const location = {
-		lat: '',
-		lng: '',
-	};
-
-	const venueOwner = {
+	const [venueOwner, setVenueOwner] = useState({
 		name: '',
 		email: '',
 		avatar: '',
-	};
-
+	});
 	const missingImage = (e) => {
 		e.target.src = 'https://placehold.co/600x400?text=Image+Not+Found';
 	};
@@ -40,16 +32,11 @@ function Venue({ isLoggedIn }) {
 			res = res.data;
 			setVenue(res);
 			setIsLoading(false);
-			if (res.location.lat && res.location.lng !== 0) {
-				location.lat = res.location.lat;
-				location.lng = res.location.lng;
-			} else {
-				location.lat = 0;
-				location.lng = 0;
-			}
-			venueOwner.name = res.owner.name;
-			venueOwner.email = res.owner.email;
-			venueOwner.avatar = res.owner.avatar;
+			setVenueOwner({
+				name: res.owner.name,
+				email: res.owner.email,
+				avatar: res.owner.avatar,
+			});
 			const userEmail = localStorage.getItem('email');
 			if (res.owner.email === userEmail) {
 				setIsOwner(true);
@@ -58,23 +45,6 @@ function Venue({ isLoggedIn }) {
 			}
 		});
 	}, [params]);
-
-	const Map = () => {
-		if (location.lat && location.lng !== 0) {
-			return <div className='w-full h-96'>No map available</div>;
-		} else {
-			<Maps lat={location.lat} lng={location.lng} />;
-		}
-	};
-
-	const sliderSettings = {
-		dots: true,
-		infinite: true,
-		speed: 500,
-		slidesToShow: 1,
-		slidesToScroll: 1,
-		centerMode: true,
-	};
 
 	if (isLoading) {
 		return (
@@ -128,7 +98,7 @@ function Venue({ isLoggedIn }) {
 							isOpen={modalIsOpen}
 							onRequestClose={closeModal}
 							className='w-9/12 h-auto outline-none'
-							overlayClassName='fixed inset-0 z-50 flex justify-center items-center bg-white bg-opacity-90'
+							overlayClassName='fixed inset-0 flex justify-center items-center bg-white bg-opacity-90 z-50'
 						>
 							<span
 								className='cursor-pointer z-40 text-white absolute top-4 right-4 text-6xl rounded-full bg-blue-600 bg-opacity-50 p-2'
@@ -159,54 +129,37 @@ function Venue({ isLoggedIn }) {
 					</div>
 				)}
 			</div>
-			<div className='mb-4 flex flex-col md:flex-row'>
+			<div className='mb-4 flex flex-col md:flex-row z-0'>
 				<div className='md:w-2/3 md:pr-4'>
-					<Modal
-						isOpen={isOpen}
-						onRequestClose={() => setIsOpen(false)}
-						className='w-9/12 h-auto outline-none'
-						overlayClassName='fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-90'
+					<CarouselProvider
+						naturalSlideWidth={100}
+						naturalSlideHeight={100}
+						totalSlides={venue.media.length}
+						className='relative'
 					>
-						<span
-							className='cursor-pointer z-40 text-white absolute top-4 right-4 text-6xl rounded-full bg-blue-600 bg-opacity-50 p-2'
-							onClick={() => setIsOpen(false)}
-						>
-							<MdFullscreenExit />
-						</span>
-						{venue.media.length > 1 ? (
-							<Slider {...sliderSettings}>
-								{venue.media.map((image, index) => (
-									<img key={index} src={image} alt={venue.name} className='w-8/12 h-8/12 mx-auto' />
-								))}
-							</Slider>
-						) : (
-							<img src={venue.media} alt={venue.name} className='w-8/12 h-8/12 mx-auto' />
-						)}
-					</Modal>
-
-					{venue.media.length > 1 ? (
-						<Slider {...sliderSettings}>
-							{venue.media.map((image) => (
-								<div key={image}>
+						<Slider>
+							{venue.media.map((image, index) => (
+								<Slide index={index} key={index}>
 									<img
 										src={image}
-										onError={missingImage}
-										onClick={() => setIsOpen(true)}
 										alt={venue.name}
-										className='w-full h-64 object-cover rounded-md mb-4'
+										onError={missingImage}
+										className='w-full h-full object-cover rounded-md'
 									/>
-								</div>
+								</Slide>
 							))}
 						</Slider>
-					) : (
-						<img
-							src={venue.media}
-							alt={venue.name}
-							onError={missingImage}
-							onClick={() => setIsOpen(true)}
-							className='w-full h-64 object-contain shadow-lg rounded-md mb-4 bg-slate-500'
-						/>
-					)}
+						{venue.media.length > 1 && (
+							<div className='absolute top-0 left-0 w-full h-full flex justify-between items-center'>
+								<ButtonBack className='absolute top-1/2 left-0 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded'>
+									<MdKeyboardArrowLeft />
+								</ButtonBack>
+								<ButtonNext className='absolute top-1/2 right-0 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded'>
+									<MdKeyboardArrowRight />
+								</ButtonNext>
+							</div>
+						)}
+					</CarouselProvider>
 				</div>
 				<div className='md:w-1/3 md:pl-4 flex flex-col'>
 					<div className='mb-4 bg-white bg-opacity-80 p-4 rounded shadow-lg w-fit border border-blue-300'>
@@ -237,9 +190,25 @@ function Venue({ isLoggedIn }) {
 					</div>
 				</div>
 			</div>
-			<div className='mt-4'>
-				<div className='font-bold text-gray-500 mb-2'>Description:</div>
-				<p>{venue.description}</p>
+			<div className='flex flex-col space-y-4 md:flex-row md:space-x-6 md:space-y-0'>
+				<div className='bg-blue-500 p-4 rounded w-fit h-fit'>
+					<h1 className='text-white text-2xl font-bold mb-4'>Venue Created by</h1>
+					<div className='rounded-full h-24 w-24 mx-auto border-4 border-blue-300 shadow-lg overflow-hidden'>
+						<div className='relative h-full w-full'>
+							<img
+								src={venueOwner.avatar ? venueOwner.avatar : 'https://placehold.co/100x100?text=Avatar'}
+								alt={venueOwner.name}
+								className='object-cover w-full h-full'
+							/>
+						</div>
+					</div>
+					<h2 className='text-white text-2xl font-bold text-center'>{venueOwner.name}</h2>
+					<p className='text-white text-center'>{venueOwner.email}</p>
+				</div>
+				<div className='mt-4 w-full md:w-6/12'>
+					<div className='font-bold text-gray-500 mb-2'>Description:</div>
+					<p>{venue.description}</p>
+				</div>
 			</div>
 			<div className='mt-4'>
 				<div className='font-bold text-gray-500 mb-2'>Location:</div>
@@ -247,7 +216,6 @@ function Venue({ isLoggedIn }) {
 					<FaMapMarkerAlt className='mr-2' />
 					<span className='ml-1'>{venue.location.address}</span>
 				</div>
-				<Map />
 			</div>
 		</div>
 	);

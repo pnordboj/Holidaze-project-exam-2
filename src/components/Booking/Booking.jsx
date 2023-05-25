@@ -20,35 +20,23 @@ export const Booking = ({ venueId, isLoggedIn }) => {
 
 	const fetchVenue = () => {
 		axios.get(`${API_URL_VENUES}/${venueId}?_bookings=true`).then((res) => {
+			const { bookings } = res.data;
 			setVenue(res.data);
-			setBookedDates(getBookedDates(res.data.bookings));
+			setBookedDates(getBookedDates(bookings));
 		});
 	};
 
 	const getBookedDates = (bookings) => {
 		return bookings.map((booking) => {
-			const start = new Date(booking.dateFrom);
-			const end = new Date(booking.dateTo);
-			const dates = handleDates(start, end);
-			return dates;
+			const startDate = new Date(booking.dateFrom);
+			const endDate = new Date(booking.dateTo);
+			return { startDate, endDate };
 		});
-	};
-
-	const handleDates = (start, end) => {
-		const dates = [];
-		let currentDate = new Date(start);
-		while (currentDate <= end) {
-			dates.push(currentDate);
-			currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
-		}
-		return dates;
 	};
 
 	const isBooked = (date) => {
 		return bookedDates.some((bookedDate) => {
-			return bookedDate.some((booked) => {
-				return date.getTime() === booked.getTime();
-			});
+			return date.getTime() >= bookedDate.startDate.getTime() && date.getTime() <= bookedDate.endDate.getTime();
 		});
 	};
 
@@ -66,8 +54,8 @@ export const Booking = ({ venueId, isLoggedIn }) => {
 
 	const submitBooking = () => {
 		const booking = {
-			dateFrom: formatDate(startDate),
-			dateTo: formatDate(endDate),
+			dateFrom: startDate.toISOString(),
+			dateTo: endDate.toISOString(),
 			guests: guests,
 			venueId: venueId,
 		};
@@ -84,7 +72,6 @@ export const Booking = ({ venueId, isLoggedIn }) => {
 				}
 			});
 	};
-
 	return (
 		<div>
 			{isLoggedIn ? (
@@ -136,7 +123,7 @@ export const Booking = ({ venueId, isLoggedIn }) => {
 						selectsStart
 						startDate={startDate}
 						endDate={endDate}
-						filterDate={(date) => date.getDay() !== 0 && !isBooked(date)}
+						filterDate={(date) => date.getDay() !== 0 && !isBooked(date) && date > new Date()}
 						renderCustomDay={renderBookedDates}
 						className='border rounded p-2 w-full'
 					/>

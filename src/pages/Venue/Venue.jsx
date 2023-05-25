@@ -10,6 +10,7 @@ import 'pure-react-carousel/dist/react-carousel.es.css';
 import Modal from 'react-modal';
 import { API_URL_VENUES } from '../../common/common';
 import { Booking } from '../../components/Booking/Booking';
+import { ViewBooking } from '../../components/Booking/ViewBooking';
 import { Loader } from '../../components/Loader/Loader';
 
 function Venue({ isLoggedIn }) {
@@ -80,13 +81,14 @@ function Venue({ isLoggedIn }) {
 			<div className='container mx-auto mb-8'>
 				<h1 className='text-3xl font-bold my-4'>{venue.name}</h1>
 				{isOwner && (
-					<div className='space-x-6'>
+					<div className='flex flex-row space-x-4 text-center'>
 						<Link
-							to={`/manage/${venue.id}`}
+							to={`/manage/${params}`}
 							className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded'
 						>
 							Edit Venue
 						</Link>
+						<ViewBooking venueId={params} />
 						<button
 							type='button'
 							onClick={openModal}
@@ -186,7 +188,7 @@ function Venue({ isLoggedIn }) {
 					</div>
 					<div className='mt-4 flex flex-col w-full'>
 						<span className='text-blue-500 font-semibold'>${venue.price}/night</span>
-						<Booking venueId={venue.id} isLoggedIn={isLoggedIn} />
+						<Booking venueId={params} isLoggedIn={isLoggedIn} />
 					</div>
 				</div>
 			</div>

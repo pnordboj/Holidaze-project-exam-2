@@ -59,7 +59,7 @@ const Manage = () => {
 			setValue('location.continent', location.continent);
 			setValue('maxGuests', res.maxGuests);
 			setValue('description', res.description);
-			setValue('media', res.media.join(', '));
+			setValue('media', res.media.join(','));
 
 			if (res.meta) {
 				setMeta(res.meta);
@@ -73,25 +73,17 @@ const Manage = () => {
 		if (step < 3) {
 			setStep((prevState) => prevState + 1);
 		} else {
-			data.price = parseInt(data.price);
-			data.maxGuests = parseInt(data.maxGuests);
-			data.lat = parseFloat(data.lat);
-			data.lng = parseFloat(data.lng);
-			data.media = data.media.split(',').map((item) => item.trim());
+			data.media = data.media.split(',');
 			axios
-				.put(
-					url,
-					{
-						headers: {
-							'Content-Type': 'application/json',
-							Authorization: `Bearer ${localStorage.getItem('token')}`,
-						},
+				.put(url, data, {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
 					},
-					data,
-				)
+				})
 				.then((res) => {
 					res = res.data;
 					console.log(res);
+					window.location.href = `/venue/${params}`;
 				})
 				.catch((err) => {
 					console.log(err);

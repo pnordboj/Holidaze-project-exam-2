@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaWifi, FaParking, FaDog, FaBed } from 'react-icons/fa';
-import { API_URL } from '../../common/common';
+import { API_URL_VENUES } from '../../common/common';
 import { BackToTop } from '../../components/Buttons/BackToTop';
 import { Loader } from '../../components/Loader/Loader';
 import axios from 'axios';
@@ -14,7 +14,7 @@ const Home = ({ isLoggedIn, isManager }) => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await axios.get(`${API_URL}/venues`);
+				const response = await axios.get(`${API_URL_VENUES}?sort=created&sortOrder=desc`);
 				setVenues(response.data);
 				setIsLoading(false);
 			} catch (error) {

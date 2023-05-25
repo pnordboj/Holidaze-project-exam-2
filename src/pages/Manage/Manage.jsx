@@ -220,7 +220,7 @@ const Manage = () => {
 							<input
 								{...register('media', { required: true })}
 								id='images'
-								className='block w-full placeholder-gray-500 mt-1 border rounded-md p-2 shadow-sm focus:border-blue-500'
+								className='block w-10/12 placeholder-gray-500 mt-1 border rounded-md p-2 shadow-sm focus:border-blue-500'
 							/>
 							<div className='mt-4'>
 								<CarouselProvider
@@ -252,7 +252,7 @@ const Manage = () => {
 					</div>
 				)}
 
-				<div className='flex space-x-2 mt-8'>
+				<div className='flex space-x-2 mt-8 mb-12'>
 					<BackNext step={step} setStep={setStep} />
 					{step === 3 && (
 						<button

@@ -23,29 +23,47 @@ function Venue({ isLoggedIn }) {
 		email: '',
 		avatar: '',
 	});
+	const [venueNotFound, setVenueNotFound] = useState(false);
+
 	const missingImage = (e) => {
 		e.target.src = 'https://placehold.co/600x400?text=Image+Not+Found';
 	};
 
 	let params = useParams().id;
+
 	useEffect(() => {
-		axios.get(`${API_URL_VENUES}/${params}?_owner=true`).then((res) => {
-			res = res.data;
-			setVenue(res);
-			setIsLoading(false);
-			setVenueOwner({
-				name: res.owner.name,
-				email: res.owner.email,
-				avatar: res.owner.avatar,
+		axios
+			.get(`${API_URL_VENUES}/${params}?_owner=true`)
+			.then((res) => {
+				res = res.data;
+				setVenue(res);
+				setIsLoading(false);
+				setVenueOwner({
+					name: res.owner.name,
+					email: res.owner.email,
+					avatar: res.owner.avatar,
+				});
+				const userEmail = localStorage.getItem('email');
+				if (res.owner.email === userEmail) {
+					setIsOwner(true);
+				} else {
+					setIsOwner(false);
+				}
+			})
+			.catch((error) => {
+				if (error.response && error.response.status === 404) {
+					setVenueNotFound(true);
+					setIsLoading(false);
+				} else if (error.response && error.response.status === 400) {
+					setVenueNotFound(true);
+					setIsLoading(false);
+				}
 			});
-			const userEmail = localStorage.getItem('email');
-			if (res.owner.email === userEmail) {
-				setIsOwner(true);
-			} else {
-				setIsOwner(false);
-			}
-		});
 	}, [params]);
+
+	if (venueNotFound) {
+		return (window.location.href = '/*');
+	}
 
 	if (isLoading) {
 		return (
@@ -198,7 +216,7 @@ function Venue({ isLoggedIn }) {
 					<div className='rounded-full h-24 w-24 mx-auto border-4 border-blue-300 shadow-lg overflow-hidden'>
 						<div className='relative h-full w-full'>
 							<img
-								src={venueOwner.avatar ? venueOwner.avatar : 'https://placehold.co/100x100?text=Avatar'}
+								src={venueOwner.avatar || 'https://placehold.co/100x100?text=Avatar'}
 								alt={venueOwner.name}
 								className='object-cover w-full h-full'
 							/>

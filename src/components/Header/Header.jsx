@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoMdLogOut } from 'react-icons/io';
@@ -85,3 +85,15 @@ const Header = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
 };
 
 export default Header;
+
+Nav.propTypes = {
+	isLoggedIn: PropTypes.bool.isRequired,
+	setIsLoggedIn: PropTypes.func.isRequired,
+	newAvatar: PropTypes.string.isRequired,
+};
+
+Header.propTypes = {
+	isLoggedIn: PropTypes.bool.isRequired,
+	setIsLoggedIn: PropTypes.func.isRequired,
+	newAvatar: PropTypes.string.isRequired,
+};

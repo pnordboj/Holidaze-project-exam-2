@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import Modal from 'react-modal';
 import { API_URL_VENUES } from '../../common/common';
 
 Modal.setAppElement('#root');
-// eslint-disable-next-line react/prop-types
+
 export const ViewBooking = ({ venueId }) => {
 	const [modalIsOpen, setModalIsOpen] = useState(false);
 	const [bookings, setBookings] = useState([]);
@@ -84,4 +85,8 @@ export const ViewBooking = ({ venueId }) => {
 			</Modal>
 		</>
 	);
+};
+
+ViewBooking.propTypes = {
+	venueId: PropTypes.string.isRequired,
 };

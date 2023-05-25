@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { FaWifi, FaParking, FaDog, FaBed } from 'react-icons/fa';
 import { API_URL_VENUES } from '../../common/common';
@@ -101,6 +101,15 @@ const VenueCard = ({ venue, missingImage }) => {
 			</Link>
 		</div>
 	);
+};
+
+Home.propTypes = {
+	isLoggedIn: PropTypes.bool.isRequired,
+	isManager: PropTypes.bool.isRequired,
+};
+VenueCard.propTypes = {
+	venue: PropTypes.object.isRequired,
+	missingImage: PropTypes.func.isRequired,
 };
 
 export default Home;

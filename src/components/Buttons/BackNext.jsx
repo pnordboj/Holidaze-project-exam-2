@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export const BackNext = ({ step, setStep }) => {
 	const handleNext = (event) => {
@@ -32,4 +32,9 @@ export const BackNext = ({ step, setStep }) => {
 			)}
 		</div>
 	);
+};
+
+BackNext.propTypes = {
+	step: PropTypes.number.isRequired,
+	setStep: PropTypes.func.isRequired,
 };

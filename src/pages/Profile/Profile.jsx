@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { FaBed, FaDog, FaWifi, FaParking } from 'react-icons/fa';
@@ -8,7 +9,6 @@ import { API_URL_PROFILES, API_URL_BOOKINGS } from '../../common/common';
 import { MdFullscreenExit } from 'react-icons/md';
 import Modal from 'react-modal';
 
-// eslint-disable-next-line react/prop-types
 const Profile = ({ setNewAvatar }) => {
 	const params = useParams();
 	const url = `${API_URL_PROFILES}/${params.id}`;
@@ -362,6 +362,10 @@ const Profile = ({ setNewAvatar }) => {
 			)}
 		</div>
 	);
+};
+
+Profile.propTypes = {
+	setNewAvatar: PropTypes.func.isRequired,
 };
 
 export default Profile;

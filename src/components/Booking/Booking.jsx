@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { API_URL_BOOKINGS, API_URL_VENUES } from '../../common/common';
@@ -176,4 +176,9 @@ export const Booking = ({ venueId, isLoggedIn }) => {
 			</Modal>
 		</div>
 	);
+};
+
+Booking.propTypes = {
+	venueId: PropTypes.string.isRequired,
+	isLoggedIn: PropTypes.bool.isRequired,
 };

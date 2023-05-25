@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaWifi, FaParking, FaDog, FaBed, FaMapMarkerAlt } from 'react-icons/fa';
@@ -23,6 +23,7 @@ function Venue({ isLoggedIn }) {
 		email: '',
 		avatar: '',
 	});
+	const [location, setLocation] = useState([]);
 	const [venueNotFound, setVenueNotFound] = useState(false);
 
 	const missingImage = (e) => {
@@ -43,6 +44,8 @@ function Venue({ isLoggedIn }) {
 					email: res.owner.email,
 					avatar: res.owner.avatar,
 				});
+				setLocation(res.location);
+				console.log(res);
 				const userEmail = localStorage.getItem('email');
 				if (res.owner.email === userEmail) {
 					setIsOwner(true);
@@ -230,15 +233,21 @@ function Venue({ isLoggedIn }) {
 					<p>{venue.description}</p>
 				</div>
 			</div>
-			<div className='mt-4'>
-				<div className='font-bold text-gray-500 mb-2'>Location:</div>
-				<div className='flex items-center'>
-					<FaMapMarkerAlt className='mr-2' />
-					<span className='ml-1'>{venue.location.address}</span>
+			{location && (
+				<div className='mt-4'>
+					<div className='font-bold text-gray-500 mb-2'>Location:</div>
+					<div className='flex items-center'>
+						<FaMapMarkerAlt className='mr-2' />
+						<span className='mr-2'>{location}</span>
+					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 }
+
+Venue.propTypes = {
+	isLoggedIn: PropTypes.bool.isRequired,
+};
 
 export default Venue;

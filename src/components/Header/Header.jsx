@@ -38,7 +38,6 @@ const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
 		e.target.onerror = null;
 		e.target.src = 'https://placehold.co/100x100?text=No+Avatar';
 	};
-	console.log(avatar);
 	return (
 		<nav className='bg-blue-500 p-1'>
 			<div className='container mx-auto flex justify-between items-center'>

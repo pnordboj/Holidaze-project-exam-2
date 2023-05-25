@@ -66,7 +66,6 @@ export const Booking = ({ venueId, isLoggedIn }) => {
 				},
 			})
 			.then((res) => {
-				console.log(res);
 				if (res.status === 201) {
 					setCompletedBooking(true);
 				}

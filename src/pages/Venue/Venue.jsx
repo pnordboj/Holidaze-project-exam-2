@@ -45,7 +45,6 @@ function Venue({ isLoggedIn }) {
 					avatar: res.owner.avatar,
 				});
 				setLocation(res.location);
-				console.log(res);
 				const userEmail = localStorage.getItem('email');
 				if (res.owner.email === userEmail) {
 					setIsOwner(true);
@@ -238,7 +237,6 @@ function Venue({ isLoggedIn }) {
 					<div className='font-bold text-gray-500 mb-2'>Location:</div>
 					<div className='flex items-center'>
 						<FaMapMarkerAlt className='mr-2' />
-						<span className='mr-2'>{location}</span>
 					</div>
 				</div>
 			)}

@@ -84,7 +84,6 @@ const Create = () => {
 					})
 					.catch((err) => {
 						if (err.response.status < 500) {
-							console.log(err.response.data.errors[0].message);
 							setShowError(true);
 							setErrorMsg(err.response.data.errors[0].message);
 						}

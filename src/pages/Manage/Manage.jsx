@@ -81,7 +81,6 @@ const Manage = () => {
 					},
 				})
 				.then((res) => {
-					res = res.data;
 					console.log(res);
 					window.location.href = `/venue/${params}`;
 				})

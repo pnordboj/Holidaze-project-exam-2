@@ -140,7 +140,7 @@ function Authenticate({ setIsLoggedIn }) {
 	};
 
 	return (
-		<div className='container mx-auto'>
+		<div className='container mx-auto mb-24'>
 			<h1 className='text-3xl font-bold my-4'>Authenticate</h1>
 			<div className='flex justify-center items-center'>
 				<div className='w-1/2'>
@@ -261,9 +261,7 @@ function Authenticate({ setIsLoggedIn }) {
 										value={body.name}
 										onChange={handleChange}
 									/>
-									{errors.username && (
-										<p className='text-red-500 text-xs italic'>Name must be at least 3 characters.</p>
-									)}
+									{errors.name && <p className='text-red-500 text-xs italic'>Name must be at least 3 characters.</p>}
 								</div>
 								<div className='mb-4'>
 									<label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='email'>

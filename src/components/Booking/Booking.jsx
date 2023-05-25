@@ -56,7 +56,7 @@ export const Booking = ({ venueId, isLoggedIn }) => {
 		const booking = {
 			dateFrom: startDate.toISOString(),
 			dateTo: endDate.toISOString(),
-			guests: guests,
+			guests: parseInt(guests),
 			venueId: venueId,
 		};
 		axios

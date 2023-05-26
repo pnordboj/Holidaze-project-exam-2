@@ -1,6 +1,7 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, Outlet } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 // Pages
 import Home from './pages/home/Home';
@@ -15,7 +16,6 @@ import NotFound from './pages/notfound/NotFound';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 
-// eslint-disable-next-line react/prop-types
 function Layout({ isLoggedIn, setIsLoggedIn, newAvatar }) {
 	return (
 		<div>
@@ -25,6 +25,12 @@ function Layout({ isLoggedIn, setIsLoggedIn, newAvatar }) {
 		</div>
 	);
 }
+
+Layout.propTypes = {
+	isLoggedIn: PropTypes.bool.isRequired,
+	setIsLoggedIn: PropTypes.func.isRequired,
+	newAvatar: PropTypes.string.isRequired,
+};
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);

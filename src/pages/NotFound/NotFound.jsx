@@ -1,10 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaRegSadTear } from 'react-icons/fa';
+import { Helmet } from 'react-helmet';
 
 const NotFound = () => {
 	return (
 		<div className='flex flex-col items-center justify-center h-screen'>
+			<Helmet>
+				<title>404 Not Found</title>
+			</Helmet>
 			<div className='text-8xl text-gray-600 mb-4'>
 				<FaRegSadTear />
 			</div>

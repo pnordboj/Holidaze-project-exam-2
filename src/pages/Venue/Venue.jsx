@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { Helmet } from 'react-helmet';
 import { FaWifi, FaParking, FaDog, FaBed, FaMapMarkerAlt } from 'react-icons/fa';
 import { MdFoodBank, MdFullscreenExit, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
@@ -98,6 +99,10 @@ function Venue({ isLoggedIn }) {
 
 	return (
 		<div className='container w-11/12 mx-auto mb-32'>
+			<Helmet>
+				<title>{venue.name}</title>
+				<meta name='description' content={venue.description} />
+			</Helmet>
 			<div className='container mx-auto mb-8'>
 				<h1 className='text-3xl font-bold my-4'>{venue.name}</h1>
 				{isOwner && (

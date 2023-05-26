@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { FaWifi, FaParking, FaDog, FaBed, FaCheck } from 'react-icons/fa';
 import axios from 'axios';
@@ -121,6 +122,10 @@ const Create = () => {
 
 	return (
 		<div className='container mx-auto max-w-screen-lg w-11/12'>
+			<Helmet>
+				<title>Create Venue</title>
+				<meta name='description' content='Create a new venue at Holidaze!' />
+			</Helmet>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
 				className='p-6 border border-blue-500 rounded-lg bg-white shadow-xl mt-10'

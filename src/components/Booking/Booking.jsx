@@ -71,6 +71,7 @@ export const Booking = ({ venueId, isLoggedIn }) => {
 				}
 			});
 	};
+
 	return (
 		<div>
 			{isLoggedIn ? (

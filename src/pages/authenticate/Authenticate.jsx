@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
 import Countdown from 'react-countdown';
 import { API_URL_AUTH } from '../../common/common';
@@ -141,6 +142,10 @@ function Authenticate({ setIsLoggedIn }) {
 
 	return (
 		<div className='container mx-auto mb-24'>
+			<Helmet>
+				<title>Authenticate</title>
+				<meta name='description' content='Login or register to Holidaze to book a venue!' />
+			</Helmet>
 			<h1 className='text-3xl font-bold my-4'>Authenticate</h1>
 			<div className='flex justify-center items-center'>
 				<div className='w-1/2'>

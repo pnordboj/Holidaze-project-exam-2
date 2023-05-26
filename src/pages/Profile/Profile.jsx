@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { FaBed, FaDog, FaWifi, FaParking } from 'react-icons/fa';
@@ -8,6 +9,7 @@ import axios from 'axios';
 import { API_URL_PROFILES, API_URL_BOOKINGS } from '../../common/common';
 import { MdFullscreenExit } from 'react-icons/md';
 import Modal from 'react-modal';
+import EditBooking from '../../components/Booking/EditBooking';
 
 const Profile = ({ setNewAvatar }) => {
 	const params = useParams();
@@ -38,6 +40,7 @@ const Profile = ({ setNewAvatar }) => {
 		setDeleteModalOpen(true);
 		setBookingId(id);
 	};
+	const [booking, setBooking] = useState([]);
 
 	const closeDeleteModal = () => setDeleteModalOpen(false);
 
@@ -89,9 +92,10 @@ const Profile = ({ setNewAvatar }) => {
 			})
 			.then((res) => {
 				setHeaderText('My Bookings');
+				setBooking(res.data);
 				const venues = res.data.map((booking) => booking.venue);
 				setBookedVenues(venues);
-				const bookingIds = res.data.map((booking) => booking._id);
+				const bookingIds = res.data.map((booking) => booking.id);
 				setBookingId(bookingIds);
 			})
 			.catch((err) => console.log(err));
@@ -131,6 +135,22 @@ const Profile = ({ setNewAvatar }) => {
 				if (res.status === 200) {
 					getBookedVenues();
 				}
+			})
+			.catch((err) => console.log(err));
+	};
+
+	const updateBooking = (updateBooking) => {
+		const bookingUrl = `${API_URL_BOOKINGS}/${bookingId}`;
+		axios
+			.put(bookingUrl, updateBooking, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			})
+			.then((res) => {
+				if (res.status === 200) {
+					getBookedVenues();
+				}
 			});
 	};
 
@@ -141,6 +161,10 @@ const Profile = ({ setNewAvatar }) => {
 
 	return (
 		<div className='mb-24'>
+			<Helmet>
+				<title>Holidaze | {profile.name}</title>
+				<meta name='description' content='Manage or delete your bookings, edit your profile picture with ease!' />
+			</Helmet>
 			<div className='bg-blue-500 p-4 relative'>
 				<div
 					className='group cursor-pointer rounded-full h-32 w-32 mx-auto border-4 border-blue-300 shadow-lg mb-4 overflow-hidden'
@@ -253,9 +277,16 @@ const Profile = ({ setNewAvatar }) => {
 										>
 											Delete
 										</button>
-										<button className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded'>
-											Update Booking
-										</button>
+										{booking.map((book) => (
+											<div key={book.id}>
+												<EditBooking
+													booking={book}
+													bookingId={bookingId}
+													venueId={venue.id}
+													updateBooking={updateBooking}
+												/>
+											</div>
+										))}
 									</div>
 								</div>
 						  ))}

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import { Helmet } from 'react-helmet';
 import { FaWifi, FaParking, FaDog, FaBed, FaCheck } from 'react-icons/fa';
 import { API_URL_VENUES } from '../../common/common';
 import { useParams } from 'react-router-dom';
@@ -110,6 +111,10 @@ const Manage = () => {
 
 	return (
 		<div className='container mx-auto max-w-screen-lg'>
+			<Helmet>
+				<title>Manage venue</title>
+				<meta name='description' content='At Holidaze you can update your venue without any issues!' />
+			</Helmet>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
 				className='p-6 border border-blue-500 rounded-lg bg-white shadow-xl mt-10'

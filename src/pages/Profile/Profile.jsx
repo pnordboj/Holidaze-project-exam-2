@@ -36,6 +36,7 @@ const Profile = ({ setNewAvatar }) => {
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [bookingId, setBookingId] = useState([]);
 	const openDeleteModal = (id) => {
+		console.log(id);
 		setDeleteModalOpen(true);
 		setBookingId(id);
 	};
@@ -92,10 +93,8 @@ const Profile = ({ setNewAvatar }) => {
 			.then((res) => {
 				setHeaderText('My Bookings');
 				setBooking(res.data);
-				const venues = res.data.map((booking) => booking.venue);
-				setBookedVenues(venues);
-				const bookingIds = res.data.map((booking) => booking.id);
-				setBookingId(bookingIds);
+				setBookedVenues(res.data.map((booking) => booking.venue));
+				setBookingId(res.data.map((booking) => booking.id));
 			})
 			.catch((err) => console.log(err));
 	};
@@ -122,8 +121,8 @@ const Profile = ({ setNewAvatar }) => {
 		getProfile();
 	}, [url, token]);
 
-	const handleDeleteBooking = (id) => {
-		const bookingUrl = `${API_URL_BOOKINGS}/${id}`;
+	const handleDeleteBooking = () => {
+		const bookingUrl = `${API_URL_BOOKINGS}/${bookingId}`;
 		axios
 			.delete(bookingUrl, {
 				headers: {
@@ -135,7 +134,10 @@ const Profile = ({ setNewAvatar }) => {
 					getBookedVenues();
 				}
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => {
+				const error = err.response.data.errors[0].message;
+				console.log(error);
+			});
 	};
 
 	const updateBooking = (updateBooking) => {
@@ -155,7 +157,7 @@ const Profile = ({ setNewAvatar }) => {
 
 	const missingImage = (e) => {
 		e.target.onerror = null;
-		e.target.src = 'https://via.placeholder.com/150';
+		e.target.src = 'https://placehold.co/100x100?text=Avatar';
 	};
 
 	return (
@@ -186,7 +188,7 @@ const Profile = ({ setNewAvatar }) => {
 			</div>
 			<div className='container mx-auto my-6'>
 				<h3 className='ml-4 text-2xl font-semibold mb-4'>{headerText}</h3>
-				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+				<div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'>
 					{profile.venueManager
 						? venues.map((venue) => (
 								<div key={venue.id}>
@@ -194,26 +196,22 @@ const Profile = ({ setNewAvatar }) => {
 								</div>
 						  ))
 						: bookedVenues.map((venue) => (
-								<div key={venue.id}>
+								<div key={venue.id} className='sm:mx-auto'>
 									<VenueCard venue={venue} missingImage={missingImage} />
-									<div className='mt-4 flex items-center justify-between'>
+									<div className='mt-4 flex space-x-4'>
 										<button
-											className='bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded'
+											className='bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded h-fit'
 											type='button'
 											onClick={() => openDeleteModal(venue.id)}
 										>
 											Delete
 										</button>
-										{booking.map((book) => (
-											<div key={book.id}>
-												<EditBooking
-													booking={book}
-													bookingId={bookingId}
-													venueId={venue.id}
-													updateBooking={updateBooking}
-												/>
-											</div>
-										))}
+										<EditBooking
+											booking={booking.find((book) => book.venue.id === venue.id)}
+											bookingId={bookingId}
+											venueId={venue.id}
+											updateBooking={updateBooking}
+										/>
 									</div>
 								</div>
 						  ))}
@@ -309,7 +307,7 @@ const Profile = ({ setNewAvatar }) => {
 							</button>
 							<button
 								type='button'
-								onClick={handleDeleteBooking(bookingId)}
+								onClick={() => handleDeleteBooking(bookingId)}
 								className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 text-l rounded'
 							>
 								Delete

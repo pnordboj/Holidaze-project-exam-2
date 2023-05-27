@@ -6,16 +6,27 @@ import { FaWifi, FaParking, FaDog, FaBed } from 'react-icons/fa';
 export const VenueCard = ({ venue, missingImage }) => {
 	const { id, media, name, maxGuests, meta, price } = venue;
 
+	const handleMedia = (media) => {
+		if (media.includes(',') || media.includes(', ')) {
+			return media.split(',').map((url) => url.trim());
+		} else {
+			return [media];
+		}
+	};
+
 	return (
 		<div className='bg-white shadow-md border border-blue-200 rounded-md p-4 cursor-pointer hover:bg-blue-100'>
 			<Link to={`/venue/${id}`}>
 				<div className='relative h-48 rounded-md overflow-hidden'>
-					<img
-						src={media}
-						onError={missingImage}
-						alt={name}
-						className='absolute inset-0 w-full h-full object-cover rounded-md'
-					/>
+					{handleMedia(media).map((imageUrl, index) => (
+						<img
+							key={index}
+							src={imageUrl[0]}
+							onError={missingImage}
+							alt={name}
+							className='absolute inset-0 w-full h-full object-cover rounded-md'
+						/>
+					))}
 					<div className='absolute inset-0 bg-black opacity-0 hover:opacity-75 transition-opacity duration-300'>
 						<div className='flex flex-col items-center justify-center h-full text-white'>
 							<h2 className='text-xl font-semibold mb-2'>{name}</h2>

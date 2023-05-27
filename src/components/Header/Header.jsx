@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoMdLogOut } from 'react-icons/io';
+import Slogan from './Holidaze-transparent-slogan.png';
+//import LogoSlogan from './Holidaze-transparent-slogan-logo.png';
 
 const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
 	const [name, setName] = useState('');
@@ -32,6 +34,7 @@ const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
 		localStorage.removeItem('name');
 		localStorage.removeItem('avatar');
 		setIsLoggedIn(false);
+		window.location.href = '/';
 	};
 
 	const handleAvatarError = (e) => {
@@ -40,17 +43,30 @@ const Nav = ({ isLoggedIn, setIsLoggedIn, newAvatar }) => {
 	};
 	return (
 		<nav className='bg-blue-500 p-1'>
-			<div className='container mx-auto flex justify-between items-center'>
+			<div className='container mx-auto flex justify-between items-center space-x-4'>
 				<div className='flex space-x-6'>
-					<Link exact to='/' className='text-white font-semibold hover:text-blue-300' activeClassName='text-blue-300'>
+					<Link
+						exact
+						to='/'
+						className='text-white text-xl font-semibold hover:text-blue-300'
+						activeClassName='text-blue-300'
+					>
 						Home
 					</Link>
 				</div>
+				<div className='flex flex-center '>
+					<img src={Slogan} alt='Holidaze Slogan' className='w-11/12 mx-auto' />
+				</div>
 				{isLoggedIn ? (
-					<div className='flex items-center space-x-2'>
+					<div className='flex flex-center space-x-2'>
 						<div className='flex items-center'>
 							<Link to={`/profile/${name}`} className='text-white hover:text-blue-300 ml-2'>
-								<img src={avatar} alt={name} onError={handleAvatarError} className='h-12 w-12 rounded-full' />
+								<img
+									src={avatar}
+									alt={name}
+									onError={handleAvatarError}
+									className='h-12 w-12 rounded-full invisible sm:visible'
+								/>
 							</Link>
 							<Link to={`/profile/${name}`} className='text-white hover:text-blue-300 ml-2'>
 								<span className='text-white font-semibold'>{name}</span>

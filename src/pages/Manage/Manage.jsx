@@ -221,28 +221,28 @@ const Manage = () => {
 							<label htmlFor='images' className='block text-sm font-medium text-gray-700 mt-4'>
 								Images (comma separated URLs)
 							</label>
-							<input
+							<textarea
 								{...register('media', { required: true })}
 								id='images'
-								className='block w-10/12 placeholder-gray-500 mt-1 border rounded-md p-2 shadow-sm focus:border-blue-500'
+								className='block w-10/12 h-24 placeholder-gray-500 mt-1 border rounded-md p-2 shadow-sm focus:border-blue-500'
 							/>
-							<div className='mt-4'>
+							<div className='mt-4 w-8/12 h-6/12'>
 								<CarouselProvider
 									naturalSlideWidth={100}
 									naturalSlideHeight={100}
 									totalSlides={media.length}
 									isPlaying={true}
-									interval={3000}
+									interval={5000}
 									infinite={true}
 								>
 									<Slider>
 										{media.map((image, index) => (
 											<Slide key={index} index={index}>
-												<img src={image} alt='room' className='w-full h-64 object-cover' />
+												<img src={image} alt='room' className='object-contain rounded' />
 											</Slide>
 										))}
 									</Slider>
-									<div className='flex justify-center mt-4'>
+									<div className='flex justify-center'>
 										<ButtonBack className='mr-4'>
 											<MdKeyboardArrowLeft className='w-6 h-6' />
 										</ButtonBack>

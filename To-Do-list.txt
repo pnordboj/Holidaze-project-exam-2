@@ -1,0 +1,9 @@
+1. Lag visning av booking tidspunkt til customer / done
+2. Fiks Error på formene
+3. Sjekk Responsive Nettside
+4. Fiks evt bugs
+5. Fullfør Prototype
+6. Lag style sheet
+7. Fullfør Trello boardet
+8. Hoste prosjektet på Netlify
+9. Lever inn eksamen

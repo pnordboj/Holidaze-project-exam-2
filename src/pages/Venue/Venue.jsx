@@ -156,37 +156,54 @@ function Venue({ isLoggedIn }) {
 					</div>
 				)}
 			</div>
-			<div className='mb-4 flex flex-col md:flex-row z-0'>
-				<div className='md:w-2/3 md:pr-4'>
-					<CarouselProvider
-						naturalSlideWidth={100}
-						naturalSlideHeight={100}
-						totalSlides={venue.media.length}
-						className='relative'
-					>
-						<Slider>
-							{venue.media.map((image, index) => (
-								<Slide index={index} key={index}>
-									<img
-										src={image}
-										alt={venue.name}
-										onError={missingImage}
-										className='w-full h-full object-cover rounded-md'
-									/>
-								</Slide>
-							))}
-						</Slider>
-						{venue.media.length > 1 && (
+			<div className='mb-4 flex flex-col md:flex-row z-0 md:w-8/12 md:h-12/12'>
+				<div className='md:w-2/3 md:pr-4 '>
+					{venue.media.length > 1 ? (
+						<CarouselProvider
+							naturalSlideWidth={100}
+							naturalSlideHeight={100}
+							totalSlides={venue.media.length}
+							className='relative'
+						>
+							<Slider>
+								{venue.media.map((image, index) => (
+									<Slide index={index} key={index}>
+										<img
+											src={image}
+											alt={venue.name}
+											onError={missingImage}
+											className='w-full h-full object-cover rounded-md'
+										/>
+									</Slide>
+								))}
+							</Slider>
 							<div className='absolute top-0 left-0 w-full h-full flex justify-between items-center'>
-								<ButtonBack className='absolute top-1/2 left-0 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded'>
+								<ButtonBack
+									disabled={venue.media.length <= 1}
+									className={`absolute top-1/2 left-0 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded ${
+										venue.media.length <= 1 ? 'hidden' : ''
+									}`}
+								>
 									<MdKeyboardArrowLeft />
 								</ButtonBack>
-								<ButtonNext className='absolute top-1/2 right-0 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded'>
+								<ButtonNext
+									disabled={venue.media.length <= 1}
+									className={`absolute top-1/2 right-0 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-l rounded ${
+										venue.media.length <= 1 ? 'hidden' : ''
+									}`}
+								>
 									<MdKeyboardArrowRight />
 								</ButtonNext>
 							</div>
-						)}
-					</CarouselProvider>
+						</CarouselProvider>
+					) : (
+						<img
+							src={venue.media[0]}
+							alt={venue.name}
+							onError={missingImage}
+							className='w-full h-full object-cover rounded-md'
+						/>
+					)}
 				</div>
 				<div className='md:w-1/3 md:pl-4 flex flex-col'>
 					<div className='mb-4 bg-white bg-opacity-80 p-4 rounded shadow-lg w-fit border border-blue-300'>

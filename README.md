@@ -1,70 +1,90 @@
-# Getting Started with Create React App
+[![Holidaze Logo](/src/components/Header/Holidaze-transparent-slogan-logo.png)](https://holidaze.patricknj.dev/)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Holidaze is a React application that allows users to explore and book holiday venues. Whether you're planning a weekend getaway or a long vacation, Holidaze provides a user-friendly interface to search for and book the perfect venues for your needs.
 
-## Available Scripts
+## Table of Contents
 
-In the project directory, you can run:
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Dependencies](#dependencies)
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Search and browse venues
+- View venue details, including images and amenities
+- Check availability and make bookings
+- User authentication, profile management and venue management
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Prerequisites
 
-### `npm test`
+Before running the Holidaze app, make sure you have the following installed:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js (v14 or above)
+- npm (v6 or above)
 
-### `npm run build`
+## Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+To set up the Holidaze app locally, follow these steps:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Clone the repository to your local machine:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```
+   git clone <repository-url>
+   ```
 
-### `npm run eject`
+2. Navigate to the project directory:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+   ```
+   cd holidaze
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Install the dependencies using npm:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   ```
+   npm install
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Usage
 
-## Learn More
+1. In the project directory, open the `.env` file.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. Start the development server:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   ```
+   npm start
+   ```
 
-### Code Splitting
+3. Open your web browser and visit `http://localhost:3000` to access the Holidaze app.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+4. Use the search functionality to find venues based on your preferred location, dates, and other filters.
 
-### Analyzing the Bundle Size
+5. Click on an venues to view more details, including images, amenities, and contact information.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+6. If you want to book an venues, check its availability and create an account or log in to continue with the booking process.
 
-### Making a Progressive Web App
+## Dependencies
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+The Holidaze app relies on the following third party NPM packages:
 
-### Advanced Configuration
+- autoprefixer@^10.4.14
+- axios@^1.4.0
+- bootstrap@^5.2.3
+- postcss@^8.4.21
+- pure-react-carousel@^1.30.1
+- react-countdown@^2.3.5
+- react-datepicker@^4.11.0
+- react-dom@^18.2.0
+- react-helmet@^6.1.0
+- react-hook-form@^7.43.9
+- react-icons@^4.8.0
+- react-modal@^3.16.1
+- react-router-dom@^6.8.2
+- react-scripts@5.0.1
+- react-spinners@^0.13.8
+- tailwindcss@^3.3.1
+- yup@^1.2.0
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+These packages are automatically installed when running `npm install` as described in the installation instructions.
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

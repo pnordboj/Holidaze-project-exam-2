@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import axios from 'axios';
 import { Helmet } from 'react-helmet';
-import { useForm } from 'react-hook-form';
 import Countdown from 'react-countdown';
 import { API_URL_AUTH } from '../../common/common';
 
@@ -31,7 +33,8 @@ function Authenticate({ setIsLoggedIn }) {
 	const renderer = ({ seconds, completed }) => {
 		if (login) {
 			if (completed) {
-				return setIsCompleted(true) && <p>Redirecting...</p>;
+				setIsCompleted(true);
+				return <p>Redirecting...</p>;
 			} else {
 				return (
 					<div className='flex-1 flex-col justify-center text-center justify-items-center'>
@@ -47,12 +50,29 @@ function Authenticate({ setIsLoggedIn }) {
 				);
 			}
 		}
+		return null;
 	};
+
+	const emailValidation = yup
+		.string()
+		.required('Email is required')
+		.matches(/^[A-Z0-9._%+-]+@(noroff\.no|stud\.noroff\.no)$/i, 'Email must be a valid noroff email address');
+
+	const schema = yup.object().shape({
+		name: yup.string().min(3).required('Name is required'),
+		email: emailValidation,
+		password: yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
+		avatar: yup.string().required('Avatar is required'),
+		venueManager: yup.boolean().required('Venue Manager is required'),
+	});
 
 	const {
 		register,
+		handleSubmit,
 		formState: { errors },
-	} = useForm();
+	} = useForm({
+		resolver: yupResolver(schema),
+	});
 
 	const [body, setBody] = useState({
 		name: '',
@@ -85,14 +105,15 @@ function Authenticate({ setIsLoggedIn }) {
 		});
 	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const onSubmit = () => {
 		if (registerActive) {
 			axios
 				.post(`${API_URL_AUTH}/register`, body)
 				.then((response) => {
 					if (response.status === 201) {
 						setRegisterd(true);
+						setLoginActive(true);
+						setRegisterActive(false);
 						setShowError(false);
 						return;
 					}
@@ -135,20 +156,15 @@ function Authenticate({ setIsLoggedIn }) {
 		}
 	};
 
-	const emailValidation = {
-		required: true,
-		pattern: /^[A-Z0-9._%+-]+@stud\.noroff\.no$/i,
-	};
-
 	return (
 		<div className='container mx-auto mb-24'>
 			<Helmet>
-				<title>Authenticate</title>
-				<meta name='description' content='Login or register to Holidaze to book a venue!' />
+				<title>Login</title>
+				<meta name='description' content='Login or register to Holidaze to book or create a venue!' />
 			</Helmet>
-			<h1 className='text-3xl font-bold my-4'>Authenticate</h1>
-			<div className='flex justify-center items-center'>
-				<div className='w-1/2'>
+			<h1 className='text-center text-3xl font-bold my-4'>Login or register</h1>
+			<div className='flex justify-center items-center my-8'>
+				<div className='w-10/12 md:w-6/12'>
 					<div className='flex justify-center items-center'>
 						<button
 							className={`w-1/2 py-2 rounded-tl-md rounded-bl-md ${
@@ -176,50 +192,44 @@ function Authenticate({ setIsLoggedIn }) {
 					</div>
 					<div className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
 						{loginActive && (
-							<form onSubmit={handleSubmit}>
+							<form onSubmit={handleSubmit(onSubmit)}>
 								<div className='mb-4'>
 									<label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='email'>
 										Email
 									</label>
 									<input
-										{...register('email', emailValidation)}
+										{...register('email')}
 										className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
 											errors.email ? 'border-red-500' : ''
 										}`}
 										id='email'
 										placeholder='Email'
-										type='email'
-										value={body.email}
-										onChange={handleChange}
+										onChange={(e) => handleChange(e)}
 									/>
-									{errors.email && (
-										<p className='text-red-500 text-xs italic'>Please enter a valid @stud.noroff.no email address.</p>
-									)}
+									{errors.email && <span className='text-red-500 text-xs italic'>{errors.email.message}</span>}
 								</div>
 								<div className='mb-4'>
 									<label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='password'>
 										Password
 									</label>
 									<input
-										{...register('password', { required: true, minLength: 8 })}
+										{...register('password')}
 										className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
 											errors.password ? 'border-red-500' : ''
 										}`}
+										placeholder='******************'
 										id='password'
 										type='password'
-										value={body.password}
-										onChange={handleChange}
-										placeholder='******************'
+										onChange={(e) => handleChange(e)}
 									/>
-									{errors.password && (
-										<p className='text-red-500 text-xs italic'>Password must be at least 8 characters.</p>
-									)}
+									{errors.password && <span className='text-red-500 text-xs italic'>{errors.password.message}</span>}
 								</div>
 								<div className='flex items-center justify-between'>
 									<button
 										className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
 										type='submit'
 										id='login'
+										onClick={() => onSubmit()}
 									>
 										Login
 									</button>
@@ -250,61 +260,54 @@ function Authenticate({ setIsLoggedIn }) {
 							</div>
 						)}
 						{registerActive && (
-							<form onSubmit={handleSubmit}>
+							<form onSubmit={handleSubmit(onSubmit)}>
 								<div className='mb-4'>
-									<label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='name'>
+									<label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='username'>
 										Name
 									</label>
 									<input
-										{...register('name', { required: true, minLength: 3 })}
+										{...register('name')}
 										className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
 											errors.name ? 'border-red-500' : ''
 										}`}
 										id='name'
 										placeholder='Name'
 										type='text'
-										value={body.name}
-										onChange={handleChange}
+										onChange={(e) => handleChange(e)}
 									/>
-									{errors.name && <p className='text-red-500 text-xs italic'>Name must be at least 3 characters.</p>}
+									{errors.name && <span className='text-red-500 text-xs italic'>{errors.name.message}</span>}
 								</div>
 								<div className='mb-4'>
 									<label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='email'>
 										Email
 									</label>
 									<input
-										{...register('email', emailValidation)}
+										{...register('email')}
 										className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
 											errors.email ? 'border-red-500' : ''
 										}`}
 										id='email'
 										placeholder='Email'
 										type='email'
-										value={body.email}
-										onChange={handleChange}
+										onChange={(e) => handleChange(e)}
 									/>
-									{errors.email && (
-										<p className='text-red-500 text-xs italic'>Please enter a valid @stud.noroff.no email address.</p>
-									)}
+									{errors.email && <span className='text-red-500 text-xs italic'>{errors.email.message}</span>}
 								</div>
 								<div className='mb-4'>
 									<label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='password'>
 										Password
 									</label>
 									<input
-										{...register('password', { required: true, minLength: 8 })}
+										{...register('password')}
 										className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
 											errors.password ? 'border-red-500' : ''
 										}`}
 										id='password'
 										type='password'
-										value={body.password}
-										onChange={handleChange}
 										placeholder='******************'
+										onChange={(e) => handleChange(e)}
 									/>
-									{errors.password && (
-										<p className='text-red-500 text-xs italic'>Password must be at least 8 characters.</p>
-									)}
+									{errors.password && <span className='text-red-500 text-xs italic'>{errors.password.message}</span>}
 								</div>
 								<div className='mb-4'>
 									<label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='avatar'>
@@ -328,7 +331,7 @@ function Authenticate({ setIsLoggedIn }) {
 										name='venueManager'
 										className='bg-blue-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 focus:border-gray-500 block p-2.5'
 										value={body.venueManager}
-										onChange={handleChange}
+										onChange={(e) => handleChange(e)}
 									>
 										<option value='false'>No</option>
 										<option value='true'>Yes</option>
@@ -339,6 +342,7 @@ function Authenticate({ setIsLoggedIn }) {
 										className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
 										type='submit'
 										id='register'
+										onClick={() => onSubmit()}
 									>
 										Register
 									</button>

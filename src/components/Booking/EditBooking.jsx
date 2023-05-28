@@ -13,6 +13,7 @@ const EditBooking = ({ booking, bookingId, venueId, updateBooking }) => {
 	const [startDate, setStartDate] = useState(null);
 	const [endDate, setEndDate] = useState(null);
 	const [bookedDates, setBookedDates] = useState([]);
+	const [maxGuests, setMaxGuests] = useState(0);
 
 	useEffect(() => {
 		fetchBookedDates();
@@ -29,6 +30,7 @@ const EditBooking = ({ booking, bookingId, venueId, updateBooking }) => {
 			.then((res) => {
 				const bookings = res.data;
 				setBookedDates(getBookedDates(bookings, id));
+				setMaxGuests(bookings.maxGuests);
 			});
 	};
 
@@ -71,10 +73,9 @@ const EditBooking = ({ booking, bookingId, venueId, updateBooking }) => {
 
 	const submitBooking = () => {
 		const updatedBooking = {
-			...booking,
-			guests,
-			startDate,
-			endDate,
+			guests: parseInt(guests),
+			dateFrom: startDate,
+			dateTo: endDate,
 		};
 		updateBooking(updatedBooking);
 		setModalIsOpen(false);
@@ -135,11 +136,11 @@ const EditBooking = ({ booking, bookingId, venueId, updateBooking }) => {
 						type='number'
 						value={guests}
 						min='1'
-						max={booking.maxGuests}
+						max={maxGuests}
 						onChange={(e) => setGuests(e.target.value)}
 						className='border rounded p-2 w-full'
 					/>
-					{guests > booking.maxGuests && <p className='text-red-500'>Too many guests</p>}
+					{guests > maxGuests && <p className='text-red-500'>Too many guests</p>}
 					{guests < 1 && <p className='text-red-500'>Too few guests</p>}
 				</div>
 				<div className='mb-3'>

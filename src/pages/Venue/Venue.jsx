@@ -229,7 +229,7 @@ function Venue({ isLoggedIn }) {
 						</span>
 					</div>
 					<div className='mt-4 flex flex-col w-full'>
-						<span className='text-blue-500 font-semibold'>${venue.price}/night</span>
+						<span className='text-blue-500 font-semibold mb-2'>${venue.price}/night</span>
 						<Booking venueId={params} isLoggedIn={isLoggedIn} />
 					</div>
 				</div>

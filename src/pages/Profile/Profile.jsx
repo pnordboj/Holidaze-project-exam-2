@@ -35,11 +35,10 @@ const Profile = ({ setNewAvatar }) => {
 
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [bookingId, setBookingId] = useState([]);
-	const openDeleteModal = (id) => {
-		console.log(id);
+	const openDeleteModal = () => {
 		setDeleteModalOpen(true);
-		setBookingId(id);
 	};
+
 	const [booking, setBooking] = useState([]);
 
 	const closeDeleteModal = () => setDeleteModalOpen(false);
@@ -121,8 +120,8 @@ const Profile = ({ setNewAvatar }) => {
 		getProfile();
 	}, [url, token]);
 
-	const handleDeleteBooking = () => {
-		const bookingUrl = `${API_URL_BOOKINGS}/${bookingId}`;
+	const handleDeleteBooking = (id) => {
+		const bookingUrl = `${API_URL_BOOKINGS}/${id}`;
 		axios
 			.delete(bookingUrl, {
 				headers: {
@@ -130,8 +129,10 @@ const Profile = ({ setNewAvatar }) => {
 				},
 			})
 			.then((res) => {
-				if (res.status === 200) {
+				if (res.status === 204) {
+					alert('Booking deleted!');
 					getBookedVenues();
+					closeDeleteModal();
 				}
 			})
 			.catch((err) => {
@@ -150,8 +151,16 @@ const Profile = ({ setNewAvatar }) => {
 			})
 			.then((res) => {
 				if (res.status === 200) {
+					console.log(res.data);
+					alert('Booking updated!');
 					getBookedVenues();
+				} else {
+					console.log(res.data);
 				}
+			})
+			.catch((err) => {
+				const error = err.response.data.errors[0].message;
+				console.log(error);
 			});
 	};
 
@@ -202,7 +211,7 @@ const Profile = ({ setNewAvatar }) => {
 										<button
 											className='bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded h-fit'
 											type='button'
-											onClick={() => openDeleteModal(venue.id)}
+											onClick={() => openDeleteModal(bookingId)}
 										>
 											Delete
 										</button>

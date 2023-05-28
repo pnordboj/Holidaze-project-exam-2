@@ -151,11 +151,10 @@ const Profile = ({ setNewAvatar }) => {
 			})
 			.then((res) => {
 				if (res.status === 200) {
-					console.log(res.data);
 					alert('Booking updated!');
 					getBookedVenues();
 				} else {
-					console.log(res.data);
+					alert('Something went wrong, please try again!');
 				}
 			})
 			.catch((err) => {
